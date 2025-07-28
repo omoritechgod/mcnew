@@ -56,40 +56,40 @@ export interface MaintenanceRequestResponse {
 export class UserApiService {
   // Authentication
   async login(credentials: LoginCredentials): Promise<{ token: string; user: User; vendor?: any }> {
-    return apiClient.post('/api/login', credentials, false);
+    return apiClient.post('/login', credentials, false);
   }
 
   async register(data: RegisterData): Promise<ApiResponse> {
-    return apiClient.post('/api/register', data, false);
+    return apiClient.post('/register', data, false);
   }
 
   async logout(): Promise<ApiResponse> {
-    return apiClient.post('/api/logout');
+    return apiClient.post('/logout');
   }
 
   // User profile
   async getProfile(): Promise<{ user: User; vendor?: any }> {
-    return apiClient.get('/api/me');
+    return apiClient.get('/me');
   }
 
   async updateProfileImage(imageFile: File): Promise<{ profile_image_url: string }> {
     const formData = new FormData();
     formData.append('profile_image', imageFile);
-    return apiClient.uploadFile('/api/profile/update-image', formData);
+    return apiClient.uploadFile('/profile/update-image', formData);
   }
 
   // Maintenance requests
   async submitMaintenanceRequest(request: MaintenanceRequest): Promise<{ message: string; data: MaintenanceRequestResponse }> {
-    return apiClient.post('/api/maintenance/request', request);
+    return apiClient.post('/maintenance/request', request);
   }
 
   async getMaintenanceRequests(): Promise<{ requests: MaintenanceRequestResponse[] }> {
-    return apiClient.get('/api/maintenance/my-requests');
+    return apiClient.get('/maintenance/my-requests');
   }
 
   // Dashboard summary (placeholder for future implementation)
   async getDashboardSummary(): Promise<any> {
-    return apiClient.get('/api/dashboard/summary');
+    return apiClient.get('/dashboard/summary');
   }
 
   // Error logging
