@@ -1,0 +1,81 @@
+.orbitContainer {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  margin: 0 auto;
+  overflow: visible;
+}
+
+.orbitItem {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  transition: all 0.6s ease-in-out;
+  opacity: 0.5;
+  transform: scale(0.8);
+}
+
+/* Center active item (middle of arc) */
+.active {
+  opacity: 1 !important;
+  transform: scale(1.2) !important;
+  z-index: 10;
+}
+
+/* You can customize these positions further */
+.pos0 {
+  left: 50%;
+  top: 20%;
+  transform: translateX(-50%) scale(1.2);
+  opacity: 1;
+}
+
+.pos1 {
+  left: 75%;
+  top: 50%;
+}
+
+.pos2 {
+  left: 62%;
+  top: 75%;
+}
+
+.pos3 {
+  left: 38%;
+  top: 75%;
+}
+
+.pos4 {
+  left: 25%;
+  top: 50%;
+}
+
+.pos5 {
+  left: 50%;
+  top: 95%;
+  transform: translateX(-50%);
+  opacity: 0.3;
+}
+
+/* Additional animations for enhanced visual appeal */
+.orbitPath {
+  animation: orbitGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes orbitGlow {
+  0% {
+    filter: drop-shadow(0 0 5px rgba(59, 130, 246, 0.3));
+  }
+  100% {
+    filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.6));
+  }
+}
+
+.serviceIcon {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.serviceIcon:hover {
+  transform: scale(1.1);
+  filter: brightness(1.1);
+}
