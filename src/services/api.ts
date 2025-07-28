@@ -1,5 +1,5 @@
 // Base API configuration and utilities
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://mdoilandgas.com/mcdee/backend/public/api';
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://mdoilandgas.com/mcdee/backend/public/';
 
 // API Response types
 export interface ApiResponse<T = any> {
