@@ -1,7 +1,7 @@
 import { ApiResponse } from './api';
 
 // Admin API configuration
-const ADMIN_BASE_URL = import.meta.env.VITE_ADMIN_API_BASE_URL || 'https://mdoilandgas.com/mcdee/backend/public/';
+const ADMIN_BASE_URL = import.meta.env.VITE_ADMIN_API_BASE_URL || 'https://mdoilandgas.com/mcdee/backend/public';
 
 // Admin API client (separate from regular API)
 class AdminApiClient {

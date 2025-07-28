@@ -1,6 +1,6 @@
 // API Configuration
 export const API_CONFIG = {
-  BASE_URL: import.meta.env.VITE_API_BASE_URL || 'https://mdoilandgas.com/mcdee/backend/public/',
+  BASE_URL: import.meta.env.VITE_API_BASE_URL || 'https://mdoilandgas.com/mcdee/backend/public',
   ADMIN_BASE_URL: import.meta.env.VITE_ADMIN_API_BASE_URL || 'https://mdoilandgas.com/mcdee/backend/public',
   TIMEOUT: 30000, // 30 seconds
 };
