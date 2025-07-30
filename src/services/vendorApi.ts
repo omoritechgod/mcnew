@@ -98,6 +98,16 @@ export class VendorApiService {
   async getFoodVendorDashboard(): Promise<any> {
     return apiClient.get('/api/vendor/food/dashboard');
   }
+  // Fetch all live vendors
+  async getLiveVendors(): Promise<{ message: string; data: any[] }> {
+    return apiClient.get('/api/vendors/live');
+  }
+
+  // Fetch a specific live vendor
+  async getLiveVendorById(id: number): Promise<{ message: string; data: any }> {
+    return apiClient.get(`/api/vendors/live/${id}`);
+  }
+
 }
 
 // Create and export service instance

@@ -34,7 +34,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [notifications, setNotifications] = useState(3);
 
-  const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://mdoilandgas.com/mcdee/backend/public';
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
 
   useEffect(() => {
     fetchUserData();
@@ -84,18 +84,18 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
     const baseItems = [
       { icon: <Home size={20} />, label: 'Overview', path: getDashboardPath(user!) },
+      { icon: <User size={20} />, label: 'Profile', path: `${getDashboardPath(user!)}/profile` },
       { icon: <BarChart3 size={20} />, label: 'Analytics', path: `${getDashboardPath(user!)}/analytics` },
       { icon: <MessageCircle size={20} />, label: 'Messages', path: `${getDashboardPath(user!)}/messages` },
-      { icon: <User size={20} />, label: 'Profile', path: `${getDashboardPath(user!)}/profile` },
     ];
 
     if (user.user_type === 'user') {
       return [
-        ...baseItems.slice(0, 1),
+        ...baseItems.slice(0, 2), // Overview + Profile
         { icon: <Wallet size={20} />, label: 'Wallet', path: '/dashboard/user/wallet' },
         { icon: <Package size={20} />, label: 'Orders', path: '/dashboard/user/orders' },
         { icon: <Car size={20} />, label: 'Rides', path: '/dashboard/user/rides' },
-        ...baseItems.slice(1, 3),
+        ...baseItems.slice(2, 4), // Analytics + Messages
         { icon: <Settings size={20} />, label: 'Settings', path: `${getDashboardPath(user!)}/settings` },
       ];
     }
@@ -148,9 +148,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     }
 
     return [
-      ...baseItems.slice(0, 1),
+      ...baseItems.slice(0, 2), // Overview + Profile
       ...vendorItems,
-      ...baseItems.slice(1, 3),
+      ...baseItems.slice(2, 4), // Analytics + Messages
       { icon: <Shield size={20} />, label: 'Compliance', path: `${getDashboardPath(user!)}/compliance` },
       { icon: <Settings size={20} />, label: 'Settings', path: `${getDashboardPath(user!)}/settings` },
     ];

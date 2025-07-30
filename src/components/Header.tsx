@@ -31,7 +31,7 @@ const Header: React.FC = () => {
           <img
             src={logo}
             alt="MC Dee Logo"
-            className="h-[60px] w-[60px] object-contain cursor-pointer"
+            className="h-[85px] w-[85px] object-contain cursor-pointer mt-[20px]"
             onClick={() => navigate('/')}
           />
         </div>

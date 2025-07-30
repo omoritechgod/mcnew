@@ -26,6 +26,14 @@ import GeneralVendorDashboard from './pages/dashboard/vendor';
 import UserProfile from './pages/dashboard/user/profile';
 import VendorCompliance from './pages/dashboard/vendor/compliance';
 
+// Import admin components
+import AdminLogin from './pages/Admin/Login';
+import AdminDashboard from './pages/Admin/Dashboard';
+import KYCReview from './pages/Admin/KYCReview';
+import VendorManagement from './pages/Admin/Vendors';
+import AdminSettings from './pages/Admin/Settings';
+import PrivateRouteAdmin from './components/admin/PrivateRouteAdmin';
+
 import './App.css';
 
 function App() {
@@ -73,6 +81,29 @@ function App() {
           <Route path="/dashboard/apartment/compliance" element={<VendorCompliance />} />
           <Route path="/dashboard/food-vendor/compliance" element={<VendorCompliance />} />
           <Route path="/dashboard/vendor/compliance" element={<VendorCompliance />} />
+          
+          {/* Admin Routes */}
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin/dashboard" element={
+            <PrivateRouteAdmin>
+              <AdminDashboard />
+            </PrivateRouteAdmin>
+          } />
+          <Route path="/admin/vendors" element={
+            <PrivateRouteAdmin>
+              <VendorManagement />
+            </PrivateRouteAdmin>
+          } />
+          <Route path="/admin/kyc/review" element={
+            <PrivateRouteAdmin>
+              <KYCReview />
+            </PrivateRouteAdmin>
+          } />
+          <Route path="/admin/settings" element={
+            <PrivateRouteAdmin>
+              <AdminSettings />
+            </PrivateRouteAdmin>
+          } />
         </Routes>
       </div>
     </Router>

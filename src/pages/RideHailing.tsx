@@ -231,21 +231,7 @@ const RideHailing: React.FC = () => {
                 </div>
                 <div>
                   <h1 className="text-xl font-bold text-[#043873]">McDee Okada</h1>
-                  <div className="flex items-center gap-1 text-sm text-gray-600">
-                    <MapPin size={14} />
-                    <span>Lagos, Nigeria</span>
-                  </div>
                 </div>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-2">
-              <div className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(rideStatus)}`}>
-                {getRideStatusMessage()}
-              </div>
-              <div className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-bold flex items-center gap-1">
-                <Shield className="w-3 h-3" />
-                Safe Rides
               </div>
             </div>
           </div>
@@ -253,6 +239,23 @@ const RideHailing: React.FC = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Status Information - Moved from header */}
+        <div className="mb-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+          <div className="flex items-center gap-2">
+            <MapPin size={16} className="text-gray-600" />
+            <span className="text-gray-600">Lagos, Nigeria</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(rideStatus)}`}>
+              {getRideStatusMessage()}
+            </div>
+            <div className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+              <Shield className="w-3 h-3" />
+              Safe Rides
+            </div>
+          </div>
+        </div>
+
         <div className="grid lg:grid-cols-2 gap-8">
           {/* Left Side - Booking Form or Status */}
           <div className="space-y-6">
@@ -676,7 +679,7 @@ const RideHailing: React.FC = () => {
                     <>
                       <MapPin className="w-16 h-16 text-[#043873] mx-auto mb-4" />
                       <p className="text-lg font-medium text-[#043873] mb-2">Ready to Track</p>
-                      <p className="text-gray-600">Book a ride to see live location tracking</p>
+                      <p className="text-gray-600">Book a ride to see real-time GPS tracking</p>
                     </>
                   )}
 
@@ -684,10 +687,10 @@ const RideHailing: React.FC = () => {
                     <>
                       <div className="relative">
                         <Bike className="w-16 h-16 text-[#043873] mx-auto mb-4 animate-pulse" />
-                        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-20 h-20 border-4 border-[#043873] border-opacity-20 rounded-full animate-ping"></div>
+                        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-20 h-20 border-4 border-[#043873] border-opacity-20 rounded-full animate-ping gps-pulse"></div>
                       </div>
                       <p className="text-lg font-medium text-[#043873] mb-2">Searching for Riders</p>
-                      <p className="text-gray-600">Looking for nearby okada riders...</p>
+                      <p className="text-gray-600">Scanning GPS for nearby riders...</p>
                     </>
                   )}
 
@@ -704,7 +707,7 @@ const RideHailing: React.FC = () => {
                         {rideStatus === 'found' ? 'Rider Available' : 'Rider on the Way'}
                       </p>
                       <p className="text-gray-600">
-                        {rideStatus === 'found' ? 'Choose your preferred rider' : 'Track your rider in real-time'}
+                        {rideStatus === 'found' ? 'Choose your preferred rider' : 'Live GPS tracking active'}
                       </p>
                     </>
                   )}
@@ -716,7 +719,7 @@ const RideHailing: React.FC = () => {
                         <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-16 h-16 border-2 border-green-600 border-opacity-30 rounded-full animate-spin"></div>
                       </div>
                       <p className="text-lg font-medium text-green-600 mb-2">Trip in Progress</p>
-                      <p className="text-gray-600">Enjoy your ride! ETA updates in real-time</p>
+                      <p className="text-gray-600">Live GPS tracking • Real-time ETA updates</p>
                     </>
                   )}
 
@@ -735,20 +738,24 @@ const RideHailing: React.FC = () => {
               {/* Location Info */}
               {userLocation && (
                 <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+                  <div className="text-xs text-gray-500 mb-2 font-medium">GPS Coordinates (Demo)</div>
                   <div className="flex items-center text-sm text-gray-600">
                     <Navigation className="w-4 h-4 mr-2" />
                     <span>
-                      Your Location: {userLocation.lat.toFixed(6)}, {userLocation.lng.toFixed(6)}
+                      Your Location: {userLocation.lat.toFixed(4)}, {userLocation.lng.toFixed(4)}
                     </span>
                   </div>
                   {selectedRider && nearbyRiders.find(r => r.id === selectedRider) && (
                     <div className="flex items-center text-sm text-gray-600 mt-1">
                       <Bike className="w-4 h-4 mr-2" />
                       <span>
-                        Rider Location: {nearbyRiders.find(r => r.id === selectedRider)?.location.lat.toFixed(6)}, {nearbyRiders.find(r => r.id === selectedRider)?.location.lng.toFixed(6)}
+                        Rider Location: {nearbyRiders.find(r => r.id === selectedRider)?.location.lat.toFixed(4)}, {nearbyRiders.find(r => r.id === selectedRider)?.location.lng.toFixed(4)}
                       </span>
                     </div>
                   )}
+                  <div className="text-xs text-gray-400 mt-2">
+                    * Live GPS tracking will be integrated with mapping service
+                  </div>
                 </div>
               )}
 
