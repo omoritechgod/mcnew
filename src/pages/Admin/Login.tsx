@@ -141,10 +141,9 @@ const AdminLogin: React.FC = () => {
 
           {/* Demo Credentials */}
           <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-            <h4 className="font-semibold text-gray-900 mb-2">Demo Credentials</h4>
+  
             <div className="text-sm text-gray-600 space-y-1">
-              <div><strong>Email:</strong> info@mac.com</div>
-              <div><strong>Password:</strong> Suportmac$11</div>
+
             </div>
           </div>
         </div>
