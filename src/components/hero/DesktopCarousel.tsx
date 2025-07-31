@@ -16,7 +16,7 @@ const DesktopCarousel: React.FC<DesktopCarouselProps> = ({ currentItem }) => {
   const { sub, btn1, btn2 } = currentItem;
 
   return (
-    <div className="absolute bottom-[15%] left-[18%] z-10 max-w-md">
+    <div className="absolute bottom-[4%] left-[14%] z-10 max-w-md">
       <p className="text-base text-white/90 mb-6 leading-relaxed">
         {sub}
       </p>
