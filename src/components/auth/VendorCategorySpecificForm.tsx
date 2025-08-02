@@ -36,12 +36,14 @@ const VendorCategorySpecificForm: React.FC<VendorCategorySpecificFormProps> = ({
         return <MechanicFormFields onDataChange={handleFormDataChange} />;
       case 'rider':
         return <RiderFormFields onDataChange={handleFormDataChange} />;
-      case 'product':
+      case 'product_vendor':
         return <ProductVendorFormFields onDataChange={handleFormDataChange} />;
-      case 'service-apartment':
+      case 'service_apartment':
         return <ServiceApartmentFormFields onDataChange={handleFormDataChange} />;
-      case 'service':
+      case 'service_vendor':
         return <ServiceVendorFormFields onDataChange={handleFormDataChange} />;
+      case 'food_vendor':
+        return <FoodVendorFormFields onDataChange={handleFormDataChange} />;
       default:
         return <div>Invalid category selected</div>;
     }
@@ -53,12 +55,14 @@ const VendorCategorySpecificForm: React.FC<VendorCategorySpecificFormProps> = ({
         return 'Auto Mechanic Details';
       case 'rider':
         return 'Rider Details';
-      case 'product':
+      case 'product_vendor':
         return 'Product Vendor Details';
-      case 'service-apartment':
+      case 'service_apartment':
         return 'Service Apartment Details';
-      case 'service':
+      case 'service_vendor':
         return 'Service Provider Details';
+      case 'food_vendor':
+        return 'Food Vendor Details';
       default:
         return 'Vendor Details';
     }

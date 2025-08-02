@@ -8,7 +8,6 @@ interface RiderFormFieldsProps {
 const RiderFormFields: React.FC<RiderFormFieldsProps> = ({ onDataChange }) => {
   const [formData, setFormData] = useState({
     vehicle_type: 'bike',
-    license_number: '',
     experience_years: 1
   });
 
@@ -47,24 +46,6 @@ const RiderFormFields: React.FC<RiderFormFieldsProps> = ({ onDataChange }) => {
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          Driver's License Number *
-        </label>
-        <div className="relative">
-          <CreditCard className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-          <input
-            type="text"
-            name="license_number"
-            value={formData.license_number}
-            onChange={handleInputChange}
-            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="Enter your license number"
-            required
-          />
-        </div>
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
           Years of Experience *
         </label>
         <div className="relative">
@@ -86,10 +67,10 @@ const RiderFormFields: React.FC<RiderFormFieldsProps> = ({ onDataChange }) => {
       <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg">
         <h4 className="font-semibold text-blue-800 mb-2">Requirements</h4>
         <ul className="text-blue-700 text-sm space-y-1">
-          <li>• Valid driver's license</li>
           <li>• Vehicle registration documents</li>
           <li>• Insurance coverage</li>
-          <li>• Clean driving record</li>
+          <li>• Valid identification</li>
+          <li>• Motorcycle/tricycle ownership proof</li>
         </ul>
       </div>
     </div>

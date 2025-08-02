@@ -74,8 +74,8 @@ export class UserApiService {
 
   async updateProfileImage(imageFile: File): Promise<{ profile_image_url: string }> {
     const formData = new FormData();
-    formData.append('profile_image', imageFile);
-    return apiClient.uploadFile('/api/profile/update-image', formData);
+    formData.append('profile_picture', imageFile);
+    return apiClient.uploadFile('/api/profile-picture/upload', formData);
   }
 
   // Maintenance requests

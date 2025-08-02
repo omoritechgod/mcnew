@@ -46,6 +46,16 @@ export interface ServiceVendorSetupData {
   email: string;
 }
 
+export interface FoodVendorSetupData {
+  business_name: string;
+  specialty: string;
+  location: string;
+  contact_phone: string;
+  contact_email: string;
+  description: string;
+  logo?: string;
+}
+
 // Vendor API service
 export class VendorApiService {
   // Vendor registration
@@ -72,6 +82,10 @@ export class VendorApiService {
 
   async setupServiceVendor(data: ServiceVendorSetupData): Promise<ApiResponse> {
     return apiClient.post('/api/vendor/service/setup', data);
+  }
+
+  async setupFoodVendor(data: FoodVendorSetupData): Promise<ApiResponse> {
+    return apiClient.post('/api/vendor/food/setup', data);
   }
 
   // Dashboard data (placeholders for future implementation)

@@ -17,9 +17,10 @@ const VendorDetailsForm: React.FC<VendorDetailsFormProps> = ({ onSubmit, onBack,
   const categories = [
     { id: 'rider', name: 'Ride-Hailing (Okada)', description: 'Motorcycle taxi services' },
     { id: 'mechanic', name: 'Auto Mechanic', description: 'Vehicle repair and maintenance' },
-    { id: 'product', name: 'Product Vendor', description: 'Sell physical products' },
-    { id: 'service-apartment', name: 'Service Apartments', description: 'Short-term accommodation' },
-    { id: 'service', name: 'General Services', description: 'Home and professional services' }
+    { id: 'product_vendor', name: 'Product Vendor', description: 'Sell physical products' },
+    { id: 'service_apartment', name: 'Service Apartments', description: 'Short-term accommodation' },
+    { id: 'service_vendor', name: 'General Services', description: 'Home and professional services' },
+    { id: 'food_vendor', name: 'Food Vendor', description: 'Restaurant and food services' }
   ];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {

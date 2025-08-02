@@ -53,7 +53,7 @@ export class AuthApiService {
 
   async updateProfileImage(imageFile: File): Promise<{ message: string; profile_image_url: string }> {
     const formData = new FormData();
-    formData.append('image', imageFile);
+    formData.append('profile_picture', imageFile);
     return apiClient.uploadFile(ENDPOINTS.UPDATE_PROFILE_IMAGE, formData);
   }
 

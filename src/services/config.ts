@@ -14,7 +14,7 @@ export const ENDPOINTS = {
   ME: '/api/me',
   
   // Profile
-  UPDATE_PROFILE_IMAGE: '/api/user/profile/image',
+  UPDATE_PROFILE_IMAGE: '/api/profile-picture/upload',
   
   // Maintenance
   MAINTENANCE_REQUEST: '/api/maintenance/request',

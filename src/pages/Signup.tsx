@@ -34,7 +34,7 @@ const Signup: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://mdoilandgas.com/mcdee/backend/public';
 
   const handleInitialRegistrationSubmit = async (formData: InitialRegistrationData) => {
     setIsLoading(true);
@@ -107,13 +107,13 @@ const Signup: React.FC = () => {
         case 'rider':
           result = await vendorApi.setupRider(categorySpecificData);
           break;
-        case 'product':
+        case 'product_vendor':
           result = await vendorApi.setupProductVendor(categorySpecificData);
           break;
-        case 'service-apartment':
+        case 'service_apartment':
           result = await vendorApi.setupServiceApartment(categorySpecificData);
           break;
-        case 'service':
+        case 'service_vendor':
           result = await vendorApi.setupServiceVendor(categorySpecificData);
           break;
         default:
