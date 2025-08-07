@@ -122,12 +122,12 @@ export class VendorApiService {
   }
 
   async submitApartmentListing(data: any): Promise<ApiResponse> {
-    return apiClient.post('/api/listings', data);
+    return apiClient.post('/listings', data);
   }
 
   // Fetch listings posted by the authenticated vendor
   async getMyListings(): Promise<{ message: string; data: any[] }> {
-    return apiClient.get('/api/listings');
+    return apiClient.get('/listings');
   }
 
 
