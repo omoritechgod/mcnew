@@ -1,0 +1,95 @@
+import React, { useEffect, useState } from 'react';
+import DashboardLayout from '../../../components/dashboard/DashboardLayout';
+import { Building, Eye } from 'lucide-react';
+import { vendorApi } from '../../../services/vendorApi';
+
+interface Apartment {
+  id: number;
+  title: string;
+  location: string;
+  price_per_night: number;
+  type: string;
+  images: string[];
+  is_verified: boolean;
+}
+
+const PropertiesPage: React.FC = () => {
+  const [apartments, setApartments] = useState<Apartment[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchVendorApartments();
+  }, []);
+
+  const fetchVendorApartments = async () => {
+    try {
+      const res = await vendorApi.getMyApartments();
+      setApartments(res.data || []);
+    } catch (err) {
+      console.error('Error fetching apartments:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <DashboardLayout>
+      <div className="p-6">
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">My Properties</h2>
+          <p className="text-sm text-gray-600">View all your listed service apartments here.</p>
+        </div>
+
+        {loading ? (
+          <div className="text-center py-10 text-gray-500">Loading apartments...</div>
+        ) : apartments.length === 0 ? (
+          <div className="text-center py-10 text-gray-500">No apartments listed yet.</div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {apartments.map(apartment => (
+              <div key={apartment.id} className="bg-white rounded-xl shadow-sm overflow-hidden border">
+                {apartment.images?.length > 0 && (
+                  <img
+                    src={apartment.images[0]}
+                    alt={apartment.title}
+                    className="w-full h-48 object-cover"
+                  />
+                )}
+
+                <div className="p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-lg font-semibold text-gray-900">{apartment.title}</h3>
+                    <span
+                      className={`text-xs px-2 py-1 rounded-full ${
+                        apartment.is_verified ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
+                      }`}
+                    >
+                      {apartment.is_verified ? 'Verified' : 'Pending'}
+                    </span>
+                  </div>
+
+                  <p className="text-sm text-gray-600 mb-2">
+                    {apartment.location} • {apartment.type}
+                  </p>
+
+                  <div className="text-gray-900 font-bold mb-3">
+                    ₦{Number(apartment.price_per_night).toLocaleString()} <span className="text-sm font-medium text-gray-600">/night</span>
+                  </div>
+
+                  <button
+                    className="flex items-center gap-2 text-blue-600 hover:text-blue-800 text-sm font-medium"
+                  >
+                    <Eye size={16} />
+                    View Details
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </DashboardLayout>
+  );
+};
+
+export default PropertiesPage;

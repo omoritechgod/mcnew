@@ -260,7 +260,7 @@ const VendorManagement: React.FC = () => {
                       <td className="px-6 py-4">
                         <div className="text-sm text-gray-900">{vendor.user.phone}</div>
                         <div className="text-sm text-gray-500">
-                          {vendor.user.email_verified_at ? 'Email verified' : 'Email not verified'}
+                          {vendor.user.phone_verified_at ? 'Phone verified' : 'Phone not verified'}
                         </div>
                       </td>
                       <td className="px-6 py-4">
@@ -373,16 +373,16 @@ const VendorManagement: React.FC = () => {
                   <h4 className="font-semibold text-gray-900 mb-3">Verification Status</h4>
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center gap-2">
-                      {selectedVendor.user.email_verified_at ? (
+                      {selectedVendor.user.phone_verified_at ? (
                         <CheckCircle size={16} className="text-green-600" />
                       ) : (
                         <Clock size={16} className="text-yellow-600" />
                       )}
-                      <span className="text-gray-600">Email Verification:</span>
+                      <span className="text-gray-600">Phone Verification:</span>
                       <span className={`font-medium ${
-                        selectedVendor.user.email_verified_at ? 'text-green-600' : 'text-yellow-600'
+                        selectedVendor.user.phone_verified_at ? 'text-green-600' : 'text-yellow-600'
                       }`}>
-                        {selectedVendor.user.email_verified_at ? 'Verified' : 'Pending'}
+                        {selectedVendor.user.phone_verified_at ? 'Verified' : 'Pending'}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">

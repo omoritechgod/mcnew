@@ -1,5 +1,6 @@
 // src/services/adminApi.ts
 import { ApiResponse } from './api';
+import { ENDPOINTS } from './config';
 
 const ADMIN_BASE_URL = import.meta.env.VITE_ADMIN_API_BASE_URL || 'https://mdoilandgas.com/mcdee/backend/public';
 
@@ -109,20 +110,20 @@ export class AdminApiService {
 
   // Auth
   async login(credentials: { email: string; password: string }): Promise<{ token: string; admin: Admin }> {
-    return this.client.post('/api/admin/login', credentials);
+    return this.client.post(ENDPOINTS.ADMIN_LOGIN, credentials);
   }
 
   async logout(): Promise<ApiResponse> {
-    return this.client.post('/api/admin/logout');
+    return this.client.post(ENDPOINTS.ADMIN_LOGOUT);
   }
 
   async me(): Promise<Admin> {
-    return this.client.get('/api/admin/me');
+    return this.client.get(ENDPOINTS.ADMIN_ME);
   }
 
   // Dashboard stats
   async getDashboardStats(): Promise<{ data: DashboardStats }> {
-    return this.client.get('/api/admin/dashboard'); // ✅ Corrected to match backend
+    return this.client.get(ENDPOINTS.ADMIN_DASHBOARD);
   }
 
   // Other admin actions
@@ -131,15 +132,15 @@ export class AdminApiService {
   }
 
   async getVendors(): Promise<any> {
-    return this.client.get('/api/admin/vendors');
+    return this.client.get(ENDPOINTS.ADMIN_VENDORS);
   }
 
   async verifyVendor(vendorId: number): Promise<ApiResponse> {
-    return this.client.post(`/api/admin/vendors/${vendorId}/verify`);
+    return this.client.post(`${ENDPOINTS.ADMIN_VENDORS}/${vendorId}/verify`);
   }
 
   async rejectVendor(vendorId: number, reason: string): Promise<ApiResponse> {
-    return this.client.post(`/api/admin/vendors/${vendorId}/reject`, { reason });
+    return this.client.post(`${ENDPOINTS.ADMIN_VENDORS}/${vendorId}/reject`, { reason });
   }
 
   async getAnalytics(): Promise<any> {
@@ -154,21 +155,46 @@ export class AdminApiService {
     return this.client.put('/api/admin/settings', settings);
   }
   async getLiveVendors(): Promise<{ data: LiveVendor[] }> {
-    return this.client.get('/api/admin/vendors');
+    return this.client.get(ENDPOINTS.ADMIN_VENDORS);
   }
-    async getKYCVerifications(): Promise<{ data: KYCVerification[] }> {
-    return this.client.get('/api/admin/kyc/verifications');
+
+  async getKYCVerifications(): Promise<{ data: KYCVerification[] }> {
+    return this.client.get(ENDPOINTS.ADMIN_KYC_VERIFICATIONS);
   }
 
   async approveKYC(id: number): Promise<void> {
-    return this.client.post(`/api/admin/kyc/verifications/${id}/approve`);
+    const endpoint = ENDPOINTS.ADMIN_APPROVE_KYC.replace('{id}', id.toString());
+    return this.client.post(endpoint);
   }
 
   async rejectKYC(id: number, reason: string): Promise<void> {
-    return this.client.post(`/api/admin/kyc/verifications/${id}/reject`, { reason });
+    const endpoint = ENDPOINTS.ADMIN_REJECT_KYC.replace('{id}', id.toString());
+    return this.client.post(endpoint, { reason });
   }
 
 
+}
+
+// Add KYCVerification interface that was missing
+export interface KYCVerification {
+  id: number;
+  user: {
+    id: number;
+    name: string;
+    email: string;
+    phone: string;
+  };
+  vendor: {
+    id: number;
+    business_name: string;
+    category: string;
+  };
+  document_type: 'nin' | 'cac';
+  document_url: string;
+  status: 'pending' | 'approved' | 'rejected';
+  submitted_at: string;
+  reviewed_at?: string | null;
+  rejection_reason?: string | null;
 }
 
 // Export single instance

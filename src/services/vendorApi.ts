@@ -105,9 +105,9 @@ export class VendorApiService {
     return apiClient.get('/api/vendor/service/dashboard');
   }
 
-  async getApartmentDashboard(): Promise<any> {
-    return apiClient.get('/api/vendor/apartment/dashboard');
-  }
+  // async getApartmentDashboard(): Promise<any> {
+  //   return apiClient.get('/api/vendor/apartment/dashboard');
+  // }
 
   async getFoodVendorDashboard(): Promise<any> {
     return apiClient.get('/api/vendor/food/dashboard');
@@ -117,10 +117,21 @@ export class VendorApiService {
     return apiClient.get('/api/vendors/live');
   }
 
-  // Fetch a specific live vendor
   async getLiveVendorById(id: number): Promise<{ message: string; data: any }> {
     return apiClient.get(`/api/vendors/live/${id}`);
   }
+
+  async submitApartmentListing(data: any): Promise<ApiResponse> {
+    return apiClient.post('/api/listings', data);
+  }
+
+  // Fetch listings posted by the authenticated vendor
+  async getMyListings(): Promise<{ message: string; data: any[] }> {
+    return apiClient.get('/api/listings');
+  }
+
+
+
 
 }
 

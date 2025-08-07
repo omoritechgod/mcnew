@@ -36,6 +36,16 @@ export const ENDPOINTS = {
   VENDOR_PRODUCT_SETUP: '/api/vendor/product/setup',
   VENDOR_APARTMENT_SETUP: '/api/vendor/apartment/setup',
   VENDOR_SERVICE_SETUP: '/api/vendor/service/setup',
+
+  // Admin Endpoints
+  ADMIN_LOGIN: '/api/admin/login',
+  ADMIN_LOGOUT: '/api/admin/logout',
+  ADMIN_ME: '/api/admin/me',
+  ADMIN_DASHBOARD: '/api/admin/dashboard',
+  ADMIN_VENDORS: '/api/admin/vendors',
+  ADMIN_KYC_VERIFICATIONS: '/api/admin/kyc/verifications',
+  ADMIN_APPROVE_KYC: '/api/admin/kyc/verifications/{id}/approve',
+  ADMIN_REJECT_KYC: '/api/admin/kyc/verifications/{id}/reject',
 };
 
 export default API_CONFIG;

@@ -21,6 +21,10 @@ import ServiceVendorDashboard from './pages/dashboard/service-vendor';
 import ApartmentDashboard from './pages/dashboard/apartment';
 import FoodVendorDashboard from './pages/dashboard/food-vendor';
 import GeneralVendorDashboard from './pages/dashboard/vendor';
+import ApartmentListingForm from './pages/dashboard/vendor/ApartmentListing';
+import PrivateRouteVendor from './components/vendor/PrivateRouteVendor';
+import ListedPropertiesPage from './pages/dashboard/apartment/ListedPropertiesPage';
+
 
 // Import profile pages
 import UserProfile from './pages/dashboard/user/profile';
@@ -81,7 +85,24 @@ function App() {
           <Route path="/dashboard/apartment/compliance" element={<VendorCompliance />} />
           <Route path="/dashboard/food-vendor/compliance" element={<VendorCompliance />} />
           <Route path="/dashboard/vendor/compliance" element={<VendorCompliance />} />
-          
+                    <Route
+            path="/dashboard/apartment/listing"
+            element={
+              <PrivateRouteVendor>
+                <ApartmentListingForm />
+              </PrivateRouteVendor>
+            }
+          />
+          <Route
+          path="/dashboard/apartment/properties"
+          element={
+            <PrivateRouteVendor>
+              <ListedPropertiesPage />
+            </PrivateRouteVendor>
+          }
+        />
+
+
           {/* Admin Routes */}
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={

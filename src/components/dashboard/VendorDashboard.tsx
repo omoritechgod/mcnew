@@ -15,9 +15,14 @@ import {
   Calendar,
   MapPin
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+
+
 
 const VendorDashboard: React.FC = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
+  
 
   const stats = [
     {
@@ -134,10 +139,14 @@ const VendorDashboard: React.FC = () => {
                 <Bell size={20} />
                 <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
               </button>
-              <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2">
+              <button
+                onClick={() => navigate('/dashboard/apartment/listing')}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+              >
                 <Plus size={16} />
                 Add Listing
               </button>
+
             </div>
           </div>
         </div>
@@ -237,10 +246,14 @@ const VendorDashboard: React.FC = () => {
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-bold text-gray-900">My Listings</h2>
-              <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl flex items-center gap-2">
+              <button
+                onClick={() => navigate('/dashboard/apartment/listing')}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl flex items-center gap-2"
+              >
                 <Plus size={16} />
                 Create New Listing
               </button>
+
             </div>
 
             <div className="bg-white rounded-2xl shadow-sm overflow-hidden">

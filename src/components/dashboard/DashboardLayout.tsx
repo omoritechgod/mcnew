@@ -116,25 +116,27 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           { icon: <BarChart3 size={20} />, label: 'Earnings', path: '/dashboard/rider/earnings' }
         );
         break;
-      case 'product':
+      case 'product_vendor':
         vendorItems.push(
           { icon: <Package size={20} />, label: 'Products', path: '/dashboard/product-vendor/products' },
           { icon: <Users size={20} />, label: 'Orders', path: '/dashboard/product-vendor/orders' }
         );
         break;
-      case 'service-apartment':
+      case 'service_apartment':
         vendorItems.push(
           { icon: <Building size={20} />, label: 'Properties', path: '/dashboard/apartment/properties' },
-          { icon: <Users size={20} />, label: 'Bookings', path: '/dashboard/apartment/bookings' }
+          { icon: <Users size={20} />, label: 'Bookings', path: '/dashboard/apartment/bookings' },
+          { icon: <Package size={20} />, label: 'Add Listing', path: '/dashboard/apartment/listing' } // 👈 NEW
         );
         break;
-      case 'service':
+
+      case 'service_vendor':
         vendorItems.push(
           { icon: <Wrench size={20} />, label: 'Services', path: '/dashboard/service-vendor/services' },
           { icon: <Users size={20} />, label: 'Bookings', path: '/dashboard/service-vendor/bookings' }
         );
         break;
-      case 'food':
+      case 'food_vendor':
         vendorItems.push(
           { icon: <UtensilsCrossed size={20} />, label: 'Menu', path: '/dashboard/food-vendor/menu' },
           { icon: <Package size={20} />, label: 'Orders', path: '/dashboard/food-vendor/orders' }
