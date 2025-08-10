@@ -74,7 +74,7 @@ const Footer: React.FC = () => {
               </div>
               <div className="flex items-center gap-3">
                 <Mail size={16} className="text-blue-400" />
-                <span className="text-gray-300">support@mcdee.ng</span>
+                <span className="text-gray-300">support@mc-dee.com</span>
               </div>
               <div className="flex items-center gap-3">
                 <MapPin size={16} className="text-blue-400" />
