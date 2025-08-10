@@ -70,7 +70,7 @@ const Footer: React.FC = () => {
             <div className="space-y-3">
               <div className="flex items-center gap-3">
                 <Phone size={16} className="text-blue-400" />
-                <span className="text-gray-300">+234 123 456 7890</span>
+                <span className="text-gray-300">+234 803 358 0844, +234 810 518 28900</span>
               </div>
               <div className="flex items-center gap-3">
                 <Mail size={16} className="text-blue-400" />
@@ -78,7 +78,7 @@ const Footer: React.FC = () => {
               </div>
               <div className="flex items-center gap-3">
                 <MapPin size={16} className="text-blue-400" />
-                <span className="text-gray-300">Lagos, Nigeria</span>
+                <span className="text-gray-300">Plot 30 Ngari street off rumualogu ,Owhipa Choba ,Port Harcourt,Rivers state</span>
               </div>
             </div>
           </div>

@@ -243,7 +243,7 @@ const RideHailing: React.FC = () => {
         <div className="mb-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
           <div className="flex items-center gap-2">
             <MapPin size={16} className="text-gray-600" />
-            <span className="text-gray-600">Lagos, Nigeria</span>
+            <span className="text-gray-600">Plot 30 Ngari street off rumualogu ,Owhipa Choba ,Port Harcourt,Rivers state</span>
           </div>
           <div className="flex items-center gap-3">
             <div className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(rideStatus)}`}>

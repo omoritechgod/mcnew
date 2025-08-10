@@ -143,7 +143,7 @@ const GeneralServices: React.FC = () => {
                 <h1 className="text-xl font-bold text-gray-900">General Services</h1>
                 <div className="flex items-center gap-1 text-sm text-gray-600">
                   <MapPin size={14} />
-                  <span>Lagos, Nigeria</span>
+                  <span>Plot 30 Ngari street off rumualogu ,Owhipa Choba ,Port Harcourt,Rivers state</span>
                 </div>
               </div>
             </div>
