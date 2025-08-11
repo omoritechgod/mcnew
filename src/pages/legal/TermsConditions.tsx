@@ -152,7 +152,7 @@ const TermsConditions: React.FC = () => {
               <div>
                 <h3 className="text-lg font-medium text-gray-900 mb-3">Payment Processing</h3>
                 <ul className="list-disc list-inside text-gray-700 space-y-2 ml-4">
-                  <li>All payments are processed securely through Paystack</li>
+                  <li>All payments are processed securely through Flutterwave</li>
                   <li>We accept major debit/credit cards and bank transfers</li>
                   <li>Prices are displayed in Nigerian Naira (₦)</li>
                   <li>Payment is required before service delivery</li>
