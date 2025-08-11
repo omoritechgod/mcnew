@@ -88,7 +88,7 @@ const PrivacyPolicy: React.FC = () => {
               <div>
                 <h3 className="text-lg font-medium text-gray-900 mb-3">Financial Information</h3>
                 <ul className="list-disc list-inside text-gray-700 space-y-2 ml-4">
-                  <li>Payment method details (processed securely via Paystack)</li>
+                  <li>Payment method details (processed securely via Flutterwave)</li>
                   <li>Transaction history and receipts</li>
                   <li>Billing addresses</li>
                 </ul>
@@ -161,7 +161,7 @@ const PrivacyPolicy: React.FC = () => {
               <div className="p-4 bg-blue-50 rounded-lg">
                 <h3 className="text-lg font-medium text-blue-800 mb-2">With Payment Processors</h3>
                 <p className="text-blue-700 text-sm">
-                  Payment information is securely processed by Paystack and other authorized payment partners.
+                  Payment information is securely processed by Flutterwave and other authorized payment partners.
                 </p>
               </div>
 
