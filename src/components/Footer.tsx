@@ -6,43 +6,40 @@ import {
   Linkedin, 
   Mail, 
   Phone, 
-  MapPin,
-  Smartphone,
-  Monitor
+  MapPin
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
 
   const footerLinks = {
     services: [
-      { name: "Ride-Hailing", href: "#" },
-      { name: "Food Delivery", href: "#" },
-      { name: "E-commerce", href: "#" },
-      { name: "Service Apartments", href: "#" },
-      { name: "Auto Maintenance", href: "#" },
-      { name: "General Services", href: "#" }
+      { name: "Ride-Hailing", href: "/ride-hailing" },
+      { name: "Food Delivery", href: "/food-delivery" },
+      { name: "E-commerce", href: "/ecommerce" },
+      { name: "Service Apartments", href: "/service-apartments" },
+      { name: "Auto Maintenance", href: "/auto-maintenance" },
+      { name: "General Services", href: "/general-services" }
     ],
     company: [
-      { name: "About Us", href: "#about" },
-      { name: "Careers", href: "#" },
-      { name: "Press", href: "#" },
-      { name: "Blog", href: "#" },
-      { name: "Contact", href: "#" }
+      { name: "About Us", href: "/about" },
+      { name: "Contact", href: "/contact" }
     ],
     support: [
-      { name: "Help Center", href: "#" },
-      { name: "Safety", href: "#trust" },
-      { name: "Community Guidelines", href: "#" },
-      { name: "Terms of Service", href: "#" },
-      { name: "Privacy Policy", href: "#" }
+      { name: "Help Center", href: "/contact" },
+      // { name: "Safety", href: "#" },
+      // { name: "Community Guidelines", href: "#" },
+      { name: "Terms of Service", href: "/terms-of-service" },
+      { name: "Privacy Policy", href: "/privacy-policy" },
+      { name: "Refund Policy", href: "/refund-policy" }
     ],
     vendors: [
-      { name: "Become a Vendor", href: "#" },
-      { name: "Vendor Dashboard", href: "#" },
-      { name: "Verification Process", href: "#" },
-      { name: "Fee Structure", href: "#" },
-      { name: "Vendor Support", href: "#" }
+      { name: "Become a Vendor", href: "/signup" },
+      // { name: "Vendor Dashboard", href: "/vendor-dashboard" },
+      // { name: "Verification Process", href: "/vendor/verification" },
+      // { name: "Fee Structure", href: "/vendor/fees" },
+      { name: "Vendor Support", href: "/contact" }
     ]
   };
 
@@ -70,7 +67,7 @@ const Footer: React.FC = () => {
             <div className="space-y-3">
               <div className="flex items-center gap-3">
                 <Phone size={16} className="text-blue-400" />
-                <span className="text-gray-300">+234 803 358 0844, +234 810 518 28900</span>
+                <span className="text-gray-300">+234 803 358 0844, +234 810 518 2900</span>
               </div>
               <div className="flex items-center gap-3">
                 <Mail size={16} className="text-blue-400" />
@@ -78,7 +75,9 @@ const Footer: React.FC = () => {
               </div>
               <div className="flex items-center gap-3">
                 <MapPin size={16} className="text-blue-400" />
-                <span className="text-gray-300">Plot 30 Ngari street off rumualogu ,Owhipa Choba ,Port Harcourt,Rivers state</span>
+                <span className="text-gray-300">
+                  Plot 30 Ngari street off rumualogu, Owhipa Choba, Port Harcourt, Rivers state
+                </span>
               </div>
             </div>
           </div>
@@ -89,12 +88,12 @@ const Footer: React.FC = () => {
             <ul className="space-y-2">
               {footerLinks.services.map((link, index) => (
                 <li key={index}>
-                  <a 
-                    href={link.href}
+                  <Link 
+                    to={link.href}
                     className="text-gray-300 hover:text-blue-400 transition-colors text-sm"
                   >
                     {link.name}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -106,12 +105,12 @@ const Footer: React.FC = () => {
             <ul className="space-y-2">
               {footerLinks.company.map((link, index) => (
                 <li key={index}>
-                  <a 
-                    href={link.href}
+                  <Link 
+                    to={link.href}
                     className="text-gray-300 hover:text-blue-400 transition-colors text-sm"
                   >
                     {link.name}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -123,12 +122,12 @@ const Footer: React.FC = () => {
             <ul className="space-y-2">
               {footerLinks.support.map((link, index) => (
                 <li key={index}>
-                  <a 
-                    href={link.href}
+                  <Link 
+                    to={link.href}
                     className="text-gray-300 hover:text-blue-400 transition-colors text-sm"
                   >
                     {link.name}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -140,63 +139,15 @@ const Footer: React.FC = () => {
             <ul className="space-y-2">
               {footerLinks.vendors.map((link, index) => (
                 <li key={index}>
-                  <a 
-                    href={link.href}
+                  <Link 
+                    to={link.href}
                     className="text-gray-300 hover:text-blue-400 transition-colors text-sm"
                   >
                     {link.name}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
-          </div>
-        </div>
-
-        {/* App Download Section */}
-        <div className="border-t border-gray-800 mt-12 pt-8">
-          <div className="flex flex-col lg:flex-row justify-between items-center gap-8">
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Download McDee App</h3>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <a 
-                  href="#" 
-                  className="bg-gray-800 hover:bg-gray-700 rounded-lg px-4 py-3 flex items-center gap-3 transition-colors"
-                >
-                  <Smartphone size={24} className="text-blue-400" />
-                  <div>
-                    <div className="text-xs text-gray-400">Download on the</div>
-                    <div className="text-sm font-semibold">App Store</div>
-                  </div>
-                </a>
-                <a 
-                  href="#" 
-                  className="bg-gray-800 hover:bg-gray-700 rounded-lg px-4 py-3 flex items-center gap-3 transition-colors"
-                >
-                  <Monitor size={24} className="text-blue-400" />
-                  <div>
-                    <div className="text-xs text-gray-400">Get it on</div>
-                    <div className="text-sm font-semibold">Google Play</div>
-                  </div>
-                </a>
-              </div>
-            </div>
-
-            {/* Social Links */}
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Follow Us</h3>
-              <div className="flex gap-4">
-                {socialLinks.map((social, index) => (
-                  <a
-                    key={index}
-                    href={social.href}
-                    className="bg-gray-800 hover:bg-blue-600 rounded-lg p-3 transition-colors"
-                    aria-label={social.name}
-                  >
-                    {social.icon}
-                  </a>
-                ))}
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -209,9 +160,9 @@ const Footer: React.FC = () => {
               © {currentYear} McDee. All rights reserved.
             </div>
             <div className="flex flex-wrap gap-6 text-sm text-gray-400">
-              <a href="#" className="hover:text-blue-400 transition-colors">Privacy Policy</a>
-              <a href="#" className="hover:text-blue-400 transition-colors">Terms of Service</a>
-              <a href="#" className="hover:text-blue-400 transition-colors">Cookie Policy</a>
+              <Link to="/privacy-policy" className="hover:text-blue-400 transition-colors">Privacy Policy</Link>
+              <Link to="/terms-of-service" className="hover:text-blue-400 transition-colors">Terms of Service</Link>
+              <Link to="/refund-policy" className="hover:text-blue-400 transition-colors">Refund Policy</Link>
             </div>
           </div>
         </div>

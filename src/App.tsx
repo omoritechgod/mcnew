@@ -11,6 +11,11 @@ import ECommerce from './pages/ECommerce';
 import AutoMaintenance from './pages/AutoMaintenance';
 import GeneralServices from './pages/GeneralServices';
 import VendorDashboard from './components/dashboard/VendorDashboard';
+import RefundPolicy from './pages/legal/RefundPolicy';
+import TermsOfService from './pages/legal/TermsConditions';
+import PrivacyPolicy from './pages/legal/PrivacyPolicy';
+import ContactPage from './pages/ContactPage';
+
 
 // Import new dashboard components
 import UserDashboard from './pages/dashboard/user';
@@ -56,6 +61,11 @@ function App() {
           <Route path="/ecommerce" element={<ECommerce />} />
           <Route path="/auto-maintenance" element={<AutoMaintenance />} />
           <Route path="/general-services" element={<GeneralServices />} />
+          <Route path="/refund-policy" element={<RefundPolicy />} />
+          <Route path="/terms-of-service" element={<TermsOfService />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/contact" element={<ContactPage />} />
+
           
           {/* New Dashboard Routes */}
           <Route path="/dashboard/user" element={<UserDashboard />} />
