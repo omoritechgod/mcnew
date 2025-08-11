@@ -224,7 +224,7 @@ const PrivacyPolicy: React.FC = () => {
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
                   <Mail size={16} className="text-blue-600" />
-                  <span className="text-gray-700">privacy@mcdee.ng</span>
+                  <span className="text-gray-700">support@mc-dee.com</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <Phone size={16} className="text-blue-600" />
