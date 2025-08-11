@@ -30,7 +30,7 @@ const RefundPolicy: React.FC = () => {
           {/* Last Updated */}
           <div className="mb-8 p-4 bg-blue-50 rounded-lg">
             <p className="text-sm text-blue-800">
-              <strong>Last Updated:</strong> January 2025
+              <strong>Last Updated:</strong> August 2025
             </p>
             <p className="text-sm text-blue-700 mt-1">
               This Refund Policy outlines the conditions and procedures for refunds on the McDee platform.
