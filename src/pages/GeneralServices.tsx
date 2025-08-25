@@ -1,130 +1,144 @@
-import React, { useState } from 'react';
-import { ArrowLeft, Search, MapPin, Star, Clock, Shield, Phone, MessageCircle } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+// src/pages/GeneralServices.tsx
+"use client"
+
+import React, { useState, useEffect } from "react"
+import { ArrowLeft, Search, MapPin, Shield, Phone, MessageCircle, Filter, Star } from "lucide-react"
+import { useNavigate } from "react-router-dom"
+import { serviceVendorApi, type ServiceVendor } from "../services/serviceVendorApi"
+import ServiceBookingModal, { type ServiceOrderData } from "../components/services/ServiceBookingModal"
+import { serviceOrderApi } from "../services/serviceOrderApi"
+
+// Define service categories for frontend categorization
+const SERVICE_CATEGORIES = [
+  { id: "all", name: "All Services", icon: "🔧" },
+  { id: "plumbing", name: "Plumbing", icon: "🚿" },
+  { id: "electrical", name: "Electrical", icon: "⚡" },
+  { id: "cleaning", name: "Cleaning", icon: "🧹" },
+  { id: "repair", name: "Repair & Maintenance", icon: "🔨" },
+  { id: "installation", name: "Installation", icon: "🔧" },
+  { id: "other", name: "Other Services", icon: "⚙️" },
+]
 
 const GeneralServices: React.FC = () => {
-  const navigate = useNavigate();
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [searchQuery, setSearchQuery] = useState('');
+  const navigate = useNavigate()
+  const [vendors, setVendors] = useState<ServiceVendor[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [selectedCategory, setSelectedCategory] = useState("all")
+  const [selectedVendor, setSelectedVendor] = useState<ServiceVendor | null>(null)
+  const [showBookingModal, setShowBookingModal] = useState(false)
+  const [bookingLoading, setBookingLoading] = useState(false)
 
-  const serviceCategories = [
-    { id: 'all', name: 'All Services', icon: '🔧' },
-    { id: 'cleaning', name: 'Cleaning', icon: '🧹' },
-    { id: 'electrical', name: 'Electrical', icon: '⚡' },
-    { id: 'plumbing', name: 'Plumbing', icon: '🔧' },
-    { id: 'painting', name: 'Painting', icon: '🎨' },
-    { id: 'gardening', name: 'Gardening', icon: '🌱' },
-    { id: 'security', name: 'Security', icon: '🛡️' },
-    { id: 'catering', name: 'Catering', icon: '🍽️' },
-    { id: 'photography', name: 'Photography', icon: '📸' },
-  ];
+  useEffect(() => {
+    fetchServiceVendors()
+  }, [])
 
-  const serviceProviders = [
-    {
-      id: 1,
-      name: "CleanPro Services",
-      category: "cleaning",
-      image: "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=200",
-      rating: 4.9,
-      completedJobs: 156,
-      responseTime: "2 hours",
-      location: "Victoria Island, Lagos",
-      services: ["House Cleaning", "Office Cleaning", "Deep Cleaning"],
-      priceRange: "₦5,000 - ₦25,000",
-      isAvailable: true,
-      verified: true,
-      description: "Professional cleaning services for homes and offices with eco-friendly products.",
-      contact: "+234 801 234 5678"
-    },
-    {
-      id: 2,
-      name: "PowerFix Electrical",
-      category: "electrical",
-      image: "https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&w=200",
-      rating: 4.8,
-      completedJobs: 203,
-      responseTime: "1 hour",
-      location: "Ikeja, Lagos",
-      services: ["Wiring", "Generator Repair", "Solar Installation"],
-      priceRange: "₦8,000 - ₦50,000",
-      isAvailable: true,
-      verified: true,
-      description: "Licensed electricians providing safe and reliable electrical solutions.",
-      contact: "+234 802 345 6789"
-    },
-    {
-      id: 3,
-      name: "AquaFlow Plumbing",
-      category: "plumbing",
-      image: "https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?auto=compress&cs=tinysrgb&w=200",
-      rating: 4.7,
-      completedJobs: 134,
-      responseTime: "3 hours",
-      location: "Lekki, Lagos",
-      services: ["Pipe Repair", "Toilet Installation", "Water Heater Service"],
-      priceRange: "₦6,000 - ₦30,000",
-      isAvailable: true,
-      verified: true,
-      description: "Expert plumbing services for residential and commercial properties.",
-      contact: "+234 803 456 7890"
-    },
-    {
-      id: 4,
-      name: "ColorMaster Painters",
-      category: "painting",
-      image: "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=200",
-      rating: 4.6,
-      completedJobs: 89,
-      responseTime: "4 hours",
-      location: "Surulere, Lagos",
-      services: ["Interior Painting", "Exterior Painting", "Decorative Painting"],
-      priceRange: "₦15,000 - ₦100,000",
-      isAvailable: true,
-      verified: true,
-      description: "Professional painters delivering quality finishes for homes and offices.",
-      contact: "+234 804 567 8901"
-    },
-    {
-      id: 5,
-      name: "GreenThumb Gardens",
-      category: "gardening",
-      image: "https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&w=200",
-      rating: 4.8,
-      completedJobs: 67,
-      responseTime: "6 hours",
-      location: "Ikoyi, Lagos",
-      services: ["Lawn Care", "Garden Design", "Tree Trimming"],
-      priceRange: "₦10,000 - ₦75,000",
-      isAvailable: true,
-      verified: true,
-      description: "Transform your outdoor space with our professional gardening services.",
-      contact: "+234 805 678 9012"
-    },
-    {
-      id: 6,
-      name: "SecureGuard Services",
-      category: "security",
-      image: "https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?auto=compress&cs=tinysrgb&w=200",
-      rating: 4.9,
-      completedJobs: 234,
-      responseTime: "30 minutes",
-      location: "Lagos Island, Lagos",
-      services: ["Security Guards", "CCTV Installation", "Access Control"],
-      priceRange: "₦20,000 - ₦150,000",
-      isAvailable: true,
-      verified: true,
-      description: "Comprehensive security solutions for homes and businesses.",
-      contact: "+234 806 789 0123"
+  const fetchServiceVendors = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      const response = await serviceVendorApi.getPublicVendors()
+
+      if (response.data && Array.isArray(response.data)) {
+        const vendorsWithCategories = response.data.map((vendor) => ({
+          ...vendor,
+          category: categorizeVendor(vendor),
+        }))
+        setVendors(vendorsWithCategories)
+      } else {
+        setVendors([])
+      }
+    } catch (err) {
+      console.error("Error fetching vendors:", err)
+      setError("Failed to fetch service vendors. Please try again.")
+      setVendors([])
+    } finally {
+      setLoading(false)
     }
-  ];
+  }
 
-  const filteredProviders = selectedCategory === 'all' 
-    ? serviceProviders 
-    : serviceProviders.filter(provider => provider.category === selectedCategory);
+  // Categorize vendor based on keywords
+  const categorizeVendor = (vendor: ServiceVendor): string => {
+    const searchText =
+      `${vendor.service_name} ${vendor.description} ${vendor.pricings.map((p) => `${p.title}`).join(" ")}`.toLowerCase()
 
-  const handleContactProvider = (providerId: number) => {
-    console.log(`Contacting provider ${providerId}`);
-  };
+    if (searchText.includes("plumb") || searchText.includes("pipe") || searchText.includes("tap") || searchText.includes("water")) {
+      return "plumbing"
+    }
+    if (searchText.includes("electric") || searchText.includes("wiring") || searchText.includes("socket") || searchText.includes("light")) {
+      return "electrical"
+    }
+    if (searchText.includes("clean") || searchText.includes("wash") || searchText.includes("sweep")) {
+      return "cleaning"
+    }
+    if (searchText.includes("repair") || searchText.includes("fix") || searchText.includes("maintain")) {
+      return "repair"
+    }
+    if (searchText.includes("install") || searchText.includes("setup") || searchText.includes("mount")) {
+      return "installation"
+    }
+    return "other"
+  }
+
+  const handleBookService = (vendor: ServiceVendor) => {
+    const token = localStorage.getItem("token")
+    if (!token) {
+      alert("Please login to book a service")
+      navigate("/login")
+      return
+    }
+
+    setSelectedVendor(vendor)
+    setShowBookingModal(true)
+  }
+
+  const handleBookingSubmit = async (orderData: ServiceOrderData) => {
+    try {
+      setBookingLoading(true)
+      await serviceOrderApi.createOrder(orderData)
+
+      setShowBookingModal(false)
+      setSelectedVendor(null)
+
+      alert("Service request sent successfully! The vendor will respond shortly.")
+      navigate("/dashboard/user")
+    } catch (error) {
+      console.error("Error creating service order:", error)
+      alert("Failed to send service request. Please try again.")
+    } finally {
+      setBookingLoading(false)
+    }
+  }
+
+  // Filter vendors by search & category
+  const filteredVendors = vendors.filter((vendor) => {
+    const matchesSearch =
+      vendor.service_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      vendor.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      vendor.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      vendor.vendor.business_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      vendor.pricings.some((pricing) => pricing.title.toLowerCase().includes(searchQuery.toLowerCase()))
+
+    const matchesCategory = selectedCategory === "all" || vendor.category === selectedCategory
+    return matchesSearch && matchesCategory
+  })
+
+  // Display phone number
+  const getDisplayPhone = (vendor: ServiceVendor): string | null => {
+    return vendor.phone || vendor.vendor.user?.phone || null
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading service providers...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -133,17 +147,14 @@ const GeneralServices: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
-              <button 
-                onClick={() => navigate('/')}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
+              <button onClick={() => navigate("/")} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
                 <ArrowLeft size={20} />
               </button>
               <div>
                 <h1 className="text-xl font-bold text-gray-900">General Services</h1>
                 <div className="flex items-center gap-1 text-sm text-gray-600">
                   <MapPin size={14} />
-                  <span>Plot 30 Ngari street off rumualogu ,Owhipa Choba ,Port Harcourt,Rivers state</span>
+                  <span>Nigeria</span>
                 </div>
               </div>
             </div>
@@ -151,6 +162,7 @@ const GeneralServices: React.FC = () => {
         </div>
       </div>
 
+      {/* Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Search Bar */}
         <div className="mb-6">
@@ -158,7 +170,7 @@ const GeneralServices: React.FC = () => {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
             <input
               type="text"
-              placeholder="Search for services or providers..."
+              placeholder="Search for services, providers, or locations..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -166,164 +178,150 @@ const GeneralServices: React.FC = () => {
           </div>
         </div>
 
-        {/* Service Categories */}
+        {/* Category Filter */}
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Service Categories</h2>
-          <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-9 gap-3">
-            {serviceCategories.map((category) => (
+          <div className="flex items-center gap-2 mb-4">
+            <Filter size={16} className="text-gray-600" />
+            <span className="text-sm font-medium text-gray-700">Filter by Category:</span>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {SERVICE_CATEGORIES.map((category) => (
               <button
                 key={category.id}
                 onClick={() => setSelectedCategory(category.id)}
-                className={`p-4 rounded-xl border-2 transition-colors text-center ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                   selectedCategory === category.id
-                    ? 'border-blue-500 bg-blue-50'
-                    : 'border-gray-200 hover:border-gray-300 bg-white'
+                    ? "bg-blue-600 text-white"
+                    : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
                 }`}
               >
-                <div className="text-2xl mb-2">{category.icon}</div>
-                <div className="text-xs font-medium text-gray-900">{category.name}</div>
+                <span>{category.icon}</span>
+                <span>{category.name}</span>
               </button>
             ))}
           </div>
         </div>
 
-        {/* Service Providers */}
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-gray-900">
-              {selectedCategory === 'all' ? 'All Service Providers' : `${serviceCategories.find(c => c.id === selectedCategory)?.name} Services`}
-            </h2>
-            <div className="text-sm text-gray-600">
-              {filteredProviders.length} provider{filteredProviders.length !== 1 ? 's' : ''} available
+        {/* Error State */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+            <div className="flex items-center gap-2 text-red-800">
+              <Shield size={16} />
+              <span>{error}</span>
             </div>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {filteredProviders.map((provider) => (
-              <div key={provider.id} className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow">
-                <div className="flex items-start gap-4 mb-4">
-                  <div className="relative">
-                    <img 
-                      src={provider.image} 
-                      alt={provider.name}
-                      className="w-16 h-16 rounded-full object-cover"
-                    />
-                    {provider.isAvailable && (
-                      <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 border-2 border-white rounded-full"></div>
-                    )}
-                  </div>
-                  
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <h3 className="text-lg font-bold text-gray-900">{provider.name}</h3>
-                      {provider.verified && (
-                        <div className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-bold flex items-center gap-1">
-                          <Shield size={12} />
-                          Verified
-                        </div>
-                      )}
-                    </div>
-                    
-                    <div className="flex items-center gap-4 text-sm text-gray-600 mb-2">
-                      <div className="flex items-center gap-1">
-                        <Star size={14} className="text-yellow-500 fill-current" />
-                        <span>{provider.rating}</span>
-                      </div>
-                      <span>•</span>
-                      <span>{provider.completedJobs} jobs completed</span>
-                    </div>
-
-                    <div className="flex items-center gap-1 text-sm text-gray-600 mb-2">
-                      <MapPin size={14} />
-                      <span>{provider.location}</span>
-                    </div>
-
-                    <div className="flex items-center gap-1 text-sm text-gray-600">
-                      <Clock size={14} />
-                      <span>Responds in {provider.responseTime}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <p className="text-gray-600 text-sm mb-4 leading-relaxed">
-                  {provider.description}
-                </p>
-
-                {/* Services */}
-                <div className="mb-4">
-                  <h4 className="font-semibold text-gray-900 mb-2">Services Offered:</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {provider.services.map((service, index) => (
-                      <span key={index} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-medium">
-                        {service}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Price Range */}
-                <div className="mb-4">
-                  <div className="text-sm text-gray-600">
-                    <span className="font-medium">Price range:</span> {provider.priceRange}
-                  </div>
-                </div>
-
-                {/* Contact Buttons */}
-                <div className="flex gap-3">
-                  <button 
-                    onClick={() => handleContactProvider(provider.id)}
-                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition-colors flex items-center justify-center gap-2"
-                  >
-                    <MessageCircle size={16} />
-                    Contact Provider
-                  </button>
-                  <button className="px-4 py-3 border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors">
-                    <Phone size={16} />
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Empty State */}
-        {filteredProviders.length === 0 && (
-          <div className="text-center py-12">
-            <div className="text-6xl mb-4">🔧</div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">No service providers found</h3>
-            <p className="text-gray-600">Try adjusting your search or category filter</p>
+            <button onClick={fetchServiceVendors} className="mt-2 text-sm text-red-600 hover:text-red-800 underline">
+              Try Again
+            </button>
           </div>
         )}
 
-        {/* How It Works */}
-        <div className="mt-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white">
-          <h3 className="text-2xl font-bold mb-6 text-center">How General Services Work</h3>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="text-center">
-              <div className="text-4xl mb-3">🔍</div>
-              <div className="font-semibold mb-2">Browse Services</div>
-              <div className="text-sm opacity-90">Find the right service provider for your needs</div>
+        {/* Vendors List */}
+        <div className="space-y-6">
+          <h2 className="text-2xl font-bold text-gray-900">Available Service Providers</h2>
+
+          {filteredVendors.length > 0 ? (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {filteredVendors.map((vendor) => {
+                const displayPhone = getDisplayPhone(vendor)
+                return (
+                <div key={vendor.id} className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow">
+                  <div className="flex items-start gap-4 mb-4">
+                    {/* Profile Picture */}
+                    <img
+                      src={`${import.meta.env.VITE_API_BASE_URL}/${vendor.vendor.user.profile_picture}`}
+                      alt={vendor.vendor.user.name}
+                      className="w-16 h-16 rounded-full object-cover border"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = "/default-avatar.png"
+                      }}
+                    />
+
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <h3 className="text-lg font-bold text-gray-900">{vendor.service_name}</h3>
+                        {vendor.vendor.is_verified === 1 && (
+                          <div className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+                            <Shield size={12} />
+                            Verified
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Vendor personal + business name */}
+                      <p className="text-sm font-medium text-gray-700">
+                        {vendor.vendor.user.name} — {vendor.vendor.business_name}
+                      </p>
+
+                      <p className="text-sm text-gray-600 mb-2">{vendor.description}</p>
+
+                      <div className="flex items-center gap-1 text-sm text-gray-600 mb-2">
+                        <MapPin size={14} />
+                        <span className="capitalize">{vendor.location}</span>
+                      </div>
+
+                      <div className="flex items-center gap-4 text-sm">
+                        <div className="flex items-center gap-1 text-yellow-600">
+                          <Star size={14} />
+                          <span>{vendor.rating}</span>
+                          <span className="text-gray-500">({vendor.total_reviews} reviews)</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Services */}
+                  <div className="mb-4">
+                    <h4 className="font-semibold text-gray-900 mb-3">Available Services:</h4>
+                    <div className="space-y-2">
+                      {vendor.pricings.slice(0, 3).map((pricing) => (
+                        <div key={pricing.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div className="font-medium text-gray-900">{pricing.title}</div>
+                          <div className="text-lg font-bold text-blue-600 ml-4">
+                            ₦{Number(pricing.price).toLocaleString()}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => handleBookService(vendor)}
+                      className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition-colors flex items-center justify-center gap-2"
+                    >
+                      <MessageCircle size={16} />
+                      Book Service
+                    </button>
+                  </div>
+                </div>
+
+                )
+              })}
             </div>
-            <div className="text-center">
-              <div className="text-4xl mb-3">💬</div>
-              <div className="font-semibold mb-2">Contact Provider</div>
-              <div className="text-sm opacity-90">Discuss your requirements and get a quote</div>
+          ) : (
+            <div className="text-center py-12 text-gray-600">
+              No service providers found.
             </div>
-            <div className="text-center">
-              <div className="text-4xl mb-3">📅</div>
-              <div className="font-semibold mb-2">Schedule Service</div>
-              <div className="text-sm opacity-90">Book a convenient time for the service</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl mb-3">✅</div>
-              <div className="font-semibold mb-2">Pay Securely</div>
-              <div className="text-sm opacity-90">Complete payment through our secure platform</div>
-            </div>
-          </div>
+          )}
         </div>
       </div>
-    </div>
-  );
-};
 
-export default GeneralServices;
+      {/* Service Booking Modal */}
+      {showBookingModal && selectedVendor && (
+        <ServiceBookingModal
+          vendor={selectedVendor}
+          isOpen={showBookingModal}
+          onClose={() => {
+            setShowBookingModal(false)
+            setSelectedVendor(null)
+          }}
+          onBookingSubmit={handleBookingSubmit}
+          isLoading={bookingLoading}
+        />
+      )}
+    </div>
+  )
+}
+
+export default GeneralServices

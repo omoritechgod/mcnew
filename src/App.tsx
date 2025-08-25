@@ -1,49 +1,51 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import LandingPage from './pages/LandingPage';
-import Signup from './pages/Signup';
-import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
-import FoodDelivery from './pages/FoodDelivery';
-import RideHailing from './pages/RideHailing';
-import ServiceApartments from './pages/ServiceApartments';
-import ECommerce from './pages/ECommerce';
-import AutoMaintenance from './pages/AutoMaintenance';
-import GeneralServices from './pages/GeneralServices';
-import VendorDashboard from './components/dashboard/VendorDashboard';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import LandingPage from "./pages/LandingPage"
+import Signup from "./pages/Signup"
+import Login from "./pages/Login"
+import Dashboard from "./pages/Dashboard"
+import FoodDelivery from "./pages/FoodDelivery"
+import RideHailing from "./pages/RideHailing"
+import ServiceApartments from "./pages/ServiceApartments"
+import ECommerce from "./pages/ECommerce"
+import AutoMaintenance from "./pages/AutoMaintenance"
+import GeneralServices from "./pages/GeneralServices"
+import VendorDashboard from "./components/dashboard/VendorDashboard"
+import PaymentSuccess from "./pages/PaymentSuccess"
 import RefundPolicy from './pages/legal/RefundPolicy';
 import TermsOfService from './pages/legal/TermsConditions';
 import PrivacyPolicy from './pages/legal/PrivacyPolicy';
 import ContactPage from './pages/ContactPage';
 
-
-// Import new dashboard components
-import UserDashboard from './pages/dashboard/user';
-import MechanicDashboard from './pages/dashboard/mechanic';
-import RiderDashboard from './pages/dashboard/rider';
-import ProductVendorDashboard from './pages/dashboard/product-vendor';
-import ServiceVendorDashboard from './pages/dashboard/service-vendor';
-import ApartmentDashboard from './pages/dashboard/apartment';
-import FoodVendorDashboard from './pages/dashboard/food-vendor';
-import GeneralVendorDashboard from './pages/dashboard/vendor';
-import ApartmentListingForm from './pages/dashboard/vendor/ApartmentListing';
-import PrivateRouteVendor from './components/vendor/PrivateRouteVendor';
-import ListedPropertiesPage from './pages/dashboard/apartment/ListedPropertiesPage';
-
+// Import existing dashboard components
+import UserDashboard from "./pages/dashboard/user"
+import MechanicDashboard from "./pages/dashboard/mechanic"
+import RiderDashboard from "./pages/dashboard/rider"
+import ProductVendorDashboard from "./pages/dashboard/product-vendor"
+import ServiceVendorDashboard from "./pages/dashboard/service-vendor"
+import ServicePricings from "./pages/dashboard/service-vendor/ServicePricings"
+import ServiceOrders from "./pages/dashboard/service-vendor/ServiceOrders"
+import ApartmentDashboard from "./pages/dashboard/apartment"
+import FoodVendorDashboard from "./pages/dashboard/food-vendor"
+import GeneralVendorDashboard from "./pages/dashboard/vendor"
+import ApartmentListingForm from "./pages/dashboard/vendor/ApartmentListing"
+import PrivateRouteVendor from "./components/vendor/PrivateRouteVendor"
+import ListedPropertiesPage from "./pages/dashboard/apartment/ListedPropertiesPage"
+import MyBookings from "./pages/dashboard/user/MyBookings"
 
 // Import profile pages
-import UserProfile from './pages/dashboard/user/profile';
-import VendorCompliance from './pages/dashboard/vendor/compliance';
+import UserProfile from "./pages/dashboard/user/profile"
+import VendorCompliance from "./pages/dashboard/vendor/compliance"
 
 // Import admin components
-import AdminLogin from './pages/Admin/Login';
-import AdminDashboard from './pages/Admin/Dashboard';
-import KYCReview from './pages/Admin/KYCReview';
-import VendorManagement from './pages/Admin/Vendors';
-import AdminSettings from './pages/Admin/Settings';
-import PrivateRouteAdmin from './components/admin/PrivateRouteAdmin';
+import AdminLogin from "./pages/Admin/Login"
+import AdminDashboard from "./pages/Admin/Dashboard"
+import KYCReview from "./pages/Admin/KYCReview"
+import VendorManagement from "./pages/Admin/Vendors"
+import AdminSettings from "./pages/Admin/Settings"
+import BookingManagement from "./pages/dashboard/admin/BookingManagement"
+import PrivateRouteAdmin from "./components/admin/PrivateRouteAdmin"
 
-import './App.css';
+import "./App.css"
 
 function App() {
   return (
@@ -61,14 +63,15 @@ function App() {
           <Route path="/ecommerce" element={<ECommerce />} />
           <Route path="/auto-maintenance" element={<AutoMaintenance />} />
           <Route path="/general-services" element={<GeneralServices />} />
+          <Route path="/payment-success" element={<PaymentSuccess />} />
           <Route path="/refund-policy" element={<RefundPolicy />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/contact" element={<ContactPage />} />
 
-          
-          {/* New Dashboard Routes */}
+          {/* Dashboard Routes */}
           <Route path="/dashboard/user" element={<UserDashboard />} />
+          <Route path="/dashboard/user/bookings" element={<MyBookings />} />
           <Route path="/dashboard/mechanic" element={<MechanicDashboard />} />
           <Route path="/dashboard/rider" element={<RiderDashboard />} />
           <Route path="/dashboard/product-vendor" element={<ProductVendorDashboard />} />
@@ -76,7 +79,7 @@ function App() {
           <Route path="/dashboard/apartment" element={<ApartmentDashboard />} />
           <Route path="/dashboard/food-vendor" element={<FoodVendorDashboard />} />
           <Route path="/dashboard/vendor" element={<GeneralVendorDashboard />} />
-          
+
           {/* Profile Routes */}
           <Route path="/dashboard/user/profile" element={<UserProfile />} />
           <Route path="/dashboard/mechanic/profile" element={<UserProfile />} />
@@ -86,7 +89,7 @@ function App() {
           <Route path="/dashboard/apartment/profile" element={<UserProfile />} />
           <Route path="/dashboard/food-vendor/profile" element={<UserProfile />} />
           <Route path="/dashboard/vendor/profile" element={<UserProfile />} />
-          
+
           {/* Compliance Routes */}
           <Route path="/dashboard/mechanic/compliance" element={<VendorCompliance />} />
           <Route path="/dashboard/rider/compliance" element={<VendorCompliance />} />
@@ -95,7 +98,9 @@ function App() {
           <Route path="/dashboard/apartment/compliance" element={<VendorCompliance />} />
           <Route path="/dashboard/food-vendor/compliance" element={<VendorCompliance />} />
           <Route path="/dashboard/vendor/compliance" element={<VendorCompliance />} />
-                    <Route
+
+          {/* Apartment Vendor Routes */}
+          <Route
             path="/dashboard/apartment/listing"
             element={
               <PrivateRouteVendor>
@@ -104,42 +109,76 @@ function App() {
             }
           />
           <Route
-          path="/dashboard/apartment/properties"
-          element={
-            <PrivateRouteVendor>
-              <ListedPropertiesPage />
-            </PrivateRouteVendor>
-          }
-        />
-
+            path="/dashboard/apartment/properties"
+            element={
+              <PrivateRouteVendor>
+                <ListedPropertiesPage />
+              </PrivateRouteVendor>
+            }
+          />
+                    <Route
+            path="/dashboard/service-vendor/pricings"
+            element={
+              <PrivateRouteVendor>
+                <ServicePricings />
+              </PrivateRouteVendor>
+            }
+          />
+          <Route
+            path="/dashboard/service-vendor/orders"
+            element={
+              <PrivateRouteVendor>
+                <ServiceOrders />
+              </PrivateRouteVendor>
+            }
+          />
 
           {/* Admin Routes */}
           <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin/dashboard" element={
-            <PrivateRouteAdmin>
-              <AdminDashboard />
-            </PrivateRouteAdmin>
-          } />
-          <Route path="/admin/vendors" element={
-            <PrivateRouteAdmin>
-              <VendorManagement />
-            </PrivateRouteAdmin>
-          } />
-          <Route path="/admin/kyc/review" element={
-            <PrivateRouteAdmin>
-              <KYCReview />
-            </PrivateRouteAdmin>
-          } />
-          <Route path="/admin/settings" element={
-            <PrivateRouteAdmin>
-              <AdminSettings />
-            </PrivateRouteAdmin>
-          } />
+          <Route
+            path="/admin/dashboard"
+            element={
+              <PrivateRouteAdmin>
+                <AdminDashboard />
+              </PrivateRouteAdmin>
+            }
+          />
+          <Route
+            path="/admin/vendors"
+            element={
+              <PrivateRouteAdmin>
+                <VendorManagement />
+              </PrivateRouteAdmin>
+            }
+          />
+          <Route
+            path="/admin/kyc/review"
+            element={
+              <PrivateRouteAdmin>
+                <KYCReview />
+              </PrivateRouteAdmin>
+            }
+          />
+          <Route
+            path="/admin/bookings"
+            element={
+              <PrivateRouteAdmin>
+                <BookingManagement />
+              </PrivateRouteAdmin>
+            }
+          />
+          <Route
+            path="/admin/settings"
+            element={
+              <PrivateRouteAdmin>
+                <AdminSettings />
+              </PrivateRouteAdmin>
+            }
+          />
         </Routes>
       </div>
     </Router>
-  );
+  )
 }
 
-
-export default App;
+export default App

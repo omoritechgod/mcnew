@@ -198,7 +198,7 @@ const AutoMaintenance: React.FC = () => {
                   <h1 className="text-xl font-bold text-[#043873]">Auto Maintenance</h1>
                   <div className="flex items-center gap-1 text-sm text-gray-600">
                     <MapPin size={14} />
-                    <span>Plot 30 Ngari street off rumualogu ,Owhipa Choba ,Port Harcourt,Rivers state</span>
+                    <span>Lagos, Nigeria</span>
                   </div>
                 </div>
               </div>

@@ -67,7 +67,7 @@ const Footer: React.FC = () => {
             <div className="space-y-3">
               <div className="flex items-center gap-3">
                 <Phone size={16} className="text-blue-400" />
-                <span className="text-gray-300">+234 803 358 0844, +234 810 518 2900</span>
+                <span className="text-gray-300">+234 803 358 0844</span>
               </div>
               <div className="flex items-center gap-3">
                 <Mail size={16} className="text-blue-400" />
@@ -157,7 +157,7 @@ const Footer: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="text-sm text-gray-400">
-              © {currentYear} McDee. All rights reserved.
+              © {currentYear} McDee. All rights reserved.Developed by <a he>Nexa Trux</a>
             </div>
             <div className="flex flex-wrap gap-6 text-sm text-gray-400">
               <Link to="/privacy-policy" className="hover:text-blue-400 transition-colors">Privacy Policy</Link>

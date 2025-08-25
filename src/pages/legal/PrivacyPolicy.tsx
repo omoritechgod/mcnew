@@ -30,7 +30,7 @@ const PrivacyPolicy: React.FC = () => {
           {/* Last Updated */}
           <div className="mb-8 p-4 bg-blue-50 rounded-lg">
             <p className="text-sm text-blue-800">
-              <strong>Last Updated:</strong> August 2025
+              <strong>Last Updated:</strong> January 2025
             </p>
             <p className="text-sm text-blue-700 mt-1">
               This Privacy Policy explains how McDee collects, uses, and protects your personal information.
@@ -88,7 +88,7 @@ const PrivacyPolicy: React.FC = () => {
               <div>
                 <h3 className="text-lg font-medium text-gray-900 mb-3">Financial Information</h3>
                 <ul className="list-disc list-inside text-gray-700 space-y-2 ml-4">
-                  <li>Payment method details (processed securely via Flutterwave)</li>
+                  <li>Payment method details (processed securely via Paystack)</li>
                   <li>Transaction history and receipts</li>
                   <li>Billing addresses</li>
                 </ul>
@@ -161,7 +161,7 @@ const PrivacyPolicy: React.FC = () => {
               <div className="p-4 bg-blue-50 rounded-lg">
                 <h3 className="text-lg font-medium text-blue-800 mb-2">With Payment Processors</h3>
                 <p className="text-blue-700 text-sm">
-                  Payment information is securely processed by Flutterwave and other authorized payment partners.
+                  Payment information is securely processed by Paystack and other authorized payment partners.
                 </p>
               </div>
 
@@ -224,15 +224,15 @@ const PrivacyPolicy: React.FC = () => {
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
                   <Mail size={16} className="text-blue-600" />
-                  <span className="text-gray-700">support@mc-dee.com</span>
+                  <span className="text-gray-700">privacy@mcdee.ng</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <Phone size={16} className="text-blue-600" />
-                  <span className="text-gray-700">+234 803 358 0844, +234 810 518 2900</span>
+                  <span className="text-gray-700">+234 123 456 7890</span>
                 </div>
                 <div className="flex items-start gap-3">
                   <div className="text-blue-600 mt-1">📍</div>
-                  <span className="text-gray-700">McDee Nigeria Limited<br />Plot 30 Ngari street off rumualogu, Owhipa Choba, Port Harcourt, Rivers state</span>
+                  <span className="text-gray-700">McDee Nigeria Limited<br />Lagos, Nigeria</span>
                 </div>
               </div>
             </div>

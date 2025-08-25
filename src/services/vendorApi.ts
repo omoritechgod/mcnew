@@ -1,139 +1,167 @@
-import { apiClient, ApiResponse } from './api';
+// src/services/vendorApi.ts
+import { apiClient, ApiResponse } from "./apiClient"
 
+// ------------------
 // Vendor-specific types
+// ------------------
 export interface VendorRegistrationData {
-  vendor_type: string;
-  business_name: string;
-  category: string;
+  vendor_type: string
+  business_name: string
+  category: string
 }
 
 export interface MechanicSetupData {
-  workshop_name: string;
-  services_offered: string;
-  location: string;
-  contact_number: string;
+  workshop_name: string
+  services_offered: string
+  location: string
+  contact_number: string
 }
 
 export interface RiderSetupData {
-  vehicle_type: string;
-  license_number: string;
-  experience_years: number;
+  vehicle_type: string
+  license_number: string
+  experience_years: number
 }
 
 export interface ProductVendorSetupData {
-  contact_person: string;
-  store_address: string;
-  store_phone: string;
-  store_email: string;
-  store_description: string;
-  logo?: string;
+  contact_person: string
+  store_address: string
+  store_phone: string
+  store_email: string
+  store_description: string
+  logo?: string
 }
 
 export interface ServiceApartmentSetupData {
-  full_name: string;
-  phone_number: string;
-  organization_name: string;
-  organization_address: string;
-  website?: string;
-  years_of_experience: number;
+  full_name: string
+  phone_number: string
+  organization_name: string
+  organization_address: string
+  website?: string
+  years_of_experience: number
 }
 
 export interface ServiceVendorSetupData {
-  service_name: string;
-  description: string;
-  location: string;
-  phone: string;
-  email: string;
+  service_name: string
+  description: string
+  location: string
+  phone: string
+  email: string
 }
 
 export interface FoodVendorSetupData {
-  business_name: string;
-  specialty: string;
-  location: string;
-  contact_phone: string;
-  contact_email: string;
-  description: string;
-  logo?: string;
+  business_name: string
+  specialty: string
+  location: string
+  contact_phone: string
+  contact_email: string
+  description: string
+  logo?: string
 }
 
+// ------------------
 // Vendor API service
-export class VendorApiService {
-  // Vendor registration
-  async registerVendor(data: VendorRegistrationData): Promise<ApiResponse> {
-    return apiClient.post('/api/vendor/register', data);
-  }
+// ------------------
+export const vendorApi = {
+  /**
+   * Register vendor (step 1)
+   */
+  registerVendor: async (
+    data: VendorRegistrationData
+  ): Promise<ApiResponse> => {
+    return apiClient.post<ApiResponse>("/api/vendor/register", data, true)
+  },
 
-  // Category-specific setup
-  async setupMechanic(data: MechanicSetupData): Promise<ApiResponse> {
-    return apiClient.post('/api/vendor/mechanic/setup', data);
-  }
+  /**
+   * Setup category-specific vendor profiles
+   */
+  setupMechanic: async (data: MechanicSetupData): Promise<ApiResponse> => {
+    return apiClient.post<ApiResponse>("/api/vendor/mechanic/setup", data, true)
+  },
 
-  async setupRider(data: RiderSetupData): Promise<ApiResponse> {
-    return apiClient.post('/api/vendor/rider/setup', data);
-  }
+  setupRider: async (data: RiderSetupData): Promise<ApiResponse> => {
+    return apiClient.post<ApiResponse>("/api/vendor/rider/setup", data, true)
+  },
 
-  async setupProductVendor(data: ProductVendorSetupData): Promise<ApiResponse> {
-    return apiClient.post('/api/vendor/product/setup', data);
-  }
+  setupProductVendor: async (
+    data: ProductVendorSetupData
+  ): Promise<ApiResponse> => {
+    return apiClient.post<ApiResponse>("/api/vendor/product/setup", data, true)
+  },
 
-  async setupServiceApartment(data: ServiceApartmentSetupData): Promise<ApiResponse> {
-    return apiClient.post('/api/vendor/apartment/setup', data);
-  }
+  setupServiceApartment: async (
+    data: ServiceApartmentSetupData
+  ): Promise<ApiResponse> => {
+    return apiClient.post<ApiResponse>("/api/vendor/apartment/setup", data, true)
+  },
 
-  async setupServiceVendor(data: ServiceVendorSetupData): Promise<ApiResponse> {
-    return apiClient.post('/api/vendor/service/setup', data);
-  }
+  setupServiceVendor: async (
+    data: ServiceVendorSetupData
+  ): Promise<ApiResponse> => {
+    return apiClient.post<ApiResponse>("/api/vendor/service/setup", data, true)
+  },
 
-  async setupFoodVendor(data: FoodVendorSetupData): Promise<ApiResponse> {
-    return apiClient.post('/api/vendor/food/setup', data);
-  }
+  setupFoodVendor: async (
+    data: FoodVendorSetupData
+  ): Promise<ApiResponse> => {
+    return apiClient.post<ApiResponse>("/api/vendor/food/setup", data, true)
+  },
 
-  // Dashboard data (placeholders for future implementation)
-  async getMechanicDashboard(): Promise<any> {
-    return apiClient.get('/api/vendor/mechanic/dashboard');
-  }
+  /**
+   * Vendor dashboards (placeholders until endpoints exist)
+   */
+  getMechanicDashboard: async (): Promise<any> => {
+    return apiClient.get("/api/vendor/mechanic/dashboard", true)
+  },
 
-  async getRiderDashboard(): Promise<any> {
-    return apiClient.get('/api/vendor/rider/dashboard');
-  }
+  getRiderDashboard: async (): Promise<any> => {
+    return apiClient.get("/api/vendor/rider/dashboard", true)
+  },
 
-  async getProductVendorDashboard(): Promise<any> {
-    return apiClient.get('/api/vendor/product/dashboard');
-  }
+  getProductVendorDashboard: async (): Promise<any> => {
+    return apiClient.get("/api/vendor/product/dashboard", true)
+  },
 
-  async getServiceVendorDashboard(): Promise<any> {
-    return apiClient.get('/api/vendor/service/dashboard');
-  }
+  getServiceVendorDashboard: async (): Promise<any> => {
+    return apiClient.get("/api/vendor/service/dashboard", true)
+  },
 
-  // async getApartmentDashboard(): Promise<any> {
-  //   return apiClient.get('/api/vendor/apartment/dashboard');
-  // }
+  getFoodVendorDashboard: async (): Promise<any> => {
+    return apiClient.get("/api/vendor/food/dashboard", true)
+  },
 
-  async getFoodVendorDashboard(): Promise<any> {
-    return apiClient.get('/api/vendor/food/dashboard');
-  }
-  // Fetch all live vendors
-  async getLiveVendors(): Promise<{ message: string; data: any[] }> {
-    return apiClient.get('/api/vendors/live');
-  }
+  /**
+   * Live vendors listing
+   */
+  getLiveVendors: async (): Promise<{ message: string; data: any[] }> => {
+    return apiClient.get("/api/vendors/live", false)
+  },
 
-  async getLiveVendorById(id: number): Promise<{ message: string; data: any }> {
-    return apiClient.get(`/api/vendors/live/${id}`);
-  }
+  getLiveVendorById: async (
+    id: number
+  ): Promise<{ message: string; data: any }> => {
+    return apiClient.get(`/api/vendors/live/${id}`, false)
+  },
 
-  async submitApartmentListing(data: any): Promise<ApiResponse> {
-    return apiClient.post('/listings', data);
-  }
+  /**
+   * Vendor listings
+   */
+  submitApartmentListing: async (data: any): Promise<ApiResponse> => {
+    return apiClient.post<ApiResponse>("/api/listings", data, true)
+  },
 
-  // Fetch listings posted by the authenticated vendor
-  async getMyListings(): Promise<{ message: string; data: any[] }> {
-    return apiClient.get('/listings');
-  }
-
-
-
-
+  getMyListings: async (): Promise<{ message: string; data: any[] }> => {
+    return apiClient.get("/api/listings", true)
+  },
 }
 
-// Create and export service instance
-export const vendorApi = new VendorApiService();
+// Export types for use in components
+export type {
+  VendorRegistrationData,
+  MechanicSetupData,
+  RiderSetupData,
+  ProductVendorSetupData,
+  ServiceApartmentSetupData,
+  ServiceVendorSetupData,
+  FoodVendorSetupData,
+}

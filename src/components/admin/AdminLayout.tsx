@@ -1,93 +1,89 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import {
-  Shield,
-  LogOut,
-  Menu,
-  X,
-  Home,
-  Users,
-  UserCheck,
-  Settings,
-  Bell
-} from 'lucide-react';
-import { adminApi, Admin } from '../../services/adminApi';
+"use client"
+
+import type React from "react"
+import { useState, useEffect } from "react"
+import { useNavigate, useLocation } from "react-router-dom"
+import { Shield, LogOut, Menu, X, Home, Users, UserCheck, Settings, Bell, Calendar } from "lucide-react"
+import { adminApi, type Admin } from "../../services/adminApi"
 
 interface AdminLayoutProps {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 
 const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const [admin, setAdmin] = useState<Admin | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const navigate = useNavigate()
+  const location = useLocation()
+  const [admin, setAdmin] = useState<Admin | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   useEffect(() => {
-    fetchAdminData();
-  }, []);
+    fetchAdminData()
+  }, [])
 
   const fetchAdminData = async () => {
-    const adminToken = localStorage.getItem('adminToken');
+    const adminToken = localStorage.getItem("adminToken")
     if (!adminToken) {
-      navigate('/admin/login');
-      return;
+      navigate("/admin/login")
+      return
     }
 
     try {
-      const response = await adminApi.me();
-      setAdmin(response);
+      const response = await adminApi.me()
+      setAdmin(response)
     } catch (error) {
-      console.error('Error fetching admin data:', error);
-      localStorage.removeItem('adminToken');
-      localStorage.removeItem('admin');
-      navigate('/admin/login');
+      console.error("Error fetching admin data:", error)
+      localStorage.removeItem("adminToken")
+      localStorage.removeItem("admin")
+      navigate("/admin/login")
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   const handleLogout = async () => {
     try {
-      await adminApi.logout();
+      await adminApi.logout()
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error("Logout error:", error)
     } finally {
-      localStorage.removeItem('adminToken');
-      localStorage.removeItem('admin');
-      navigate('/admin/login');
+      localStorage.removeItem("adminToken")
+      localStorage.removeItem("admin")
+      navigate("/admin/login")
     }
-  };
+  }
 
   const navigationItems = [
-    { icon: <Home size={20} />, label: 'Dashboard', path: '/admin/dashboard' },
-    { icon: <Users size={20} />, label: 'Vendors', path: '/admin/vendors' },
-    { icon: <UserCheck size={20} />, label: 'KYC Review', path: '/admin/kyc/review' },
-    { icon: <Settings size={20} />, label: 'Settings', path: '/admin/settings' },
-  ];
+    { icon: <Home size={20} />, label: "Dashboard", path: "/admin/dashboard" },
+    { icon: <Users size={20} />, label: "Vendors", path: "/admin/vendors" },
+    { icon: <UserCheck size={20} />, label: "KYC Review", path: "/admin/kyc/review" },
+    { icon: <Calendar size={20} />, label: "Bookings", path: "/admin/bookings" },
+    { icon: <Settings size={20} />, label: "Settings", path: "/admin/settings" },
+  ]
 
   const getPageTitle = () => {
     switch (location.pathname) {
-      case '/admin/dashboard':
-        return 'Dashboard';
-      case '/admin/vendors':
-        return 'Vendor Management';
-      case '/admin/kyc/review':
-        return 'KYC Review';
-      case '/admin/settings':
-        return 'Settings';
+      case "/admin/dashboard":
+        return "Dashboard"
+      case "/admin/vendors":
+        return "Vendor Management"
+      case "/admin/kyc/review":
+        return "KYC Review"
+      case "/admin/bookings":
+        return "Booking Management"
+      case "/admin/settings":
+        return "Settings"
       default:
-        return 'Admin Portal';
+        return "Admin Portal"
     }
-  };
+  }
 
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
-    );
+    )
   }
 
   if (!admin) {
@@ -95,25 +91,24 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       <div className="min-h-screen flex items-center justify-center text-gray-500">
         Failed to load admin info. Please try again.
       </div>
-    );
+    )
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Sidebar Overlay (Mobile) */}
       {sidebarOpen && (
-        <div
-          className="fixed inset-0 z-40 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        >
+        <div className="fixed inset-0 z-40 lg:hidden" onClick={() => setSidebarOpen(false)}>
           <div className="fixed inset-0 bg-gray-600 bg-opacity-75"></div>
         </div>
       )}
 
       {/* Sidebar */}
-      <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 ${
-        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-      }`}>
+      <div
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
         <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200">
           <div className="flex items-center gap-2">
             <Shield className="text-blue-600" size={24} />
@@ -136,7 +131,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             <div className="ml-3">
               <p className="text-sm font-medium text-gray-900">{admin.name}</p>
               <p className="text-xs text-gray-500">{admin.email}</p>
-              <p className="text-xs text-blue-600 font-medium">{admin.role || 'Admin'}</p>
+              <p className="text-xs text-blue-600 font-medium">{admin.role || "Admin"}</p>
             </div>
           </div>
         </div>
@@ -148,13 +143,13 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
               <button
                 key={index}
                 onClick={() => {
-                  navigate(item.path);
-                  setSidebarOpen(false);
+                  navigate(item.path)
+                  setSidebarOpen(false)
                 }}
                 className={`w-full flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
                   location.pathname === item.path
-                    ? 'bg-blue-100 text-blue-700'
-                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                    ? "bg-blue-100 text-blue-700"
+                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                 }`}
               >
                 {item.icon}
@@ -189,9 +184,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                 >
                   <Menu size={20} />
                 </button>
-                <h1 className="ml-2 lg:ml-0 text-xl font-semibold text-gray-900">
-                  {getPageTitle()}
-                </h1>
+                <h1 className="ml-2 lg:ml-0 text-xl font-semibold text-gray-900">{getPageTitle()}</h1>
               </div>
 
               <div className="flex items-center gap-4">
@@ -211,12 +204,10 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
         </div>
 
         {/* Page Content */}
-        <main className="flex-1">
-          {children}
-        </main>
+        <main className="flex-1">{children}</main>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default AdminLayout;
+export default AdminLayout
