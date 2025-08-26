@@ -100,8 +100,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       { icon: <Building size={20} />, label: "My Bookings", path: "/dashboard/user/bookings" },
       { icon: <Wrench size={20} />, label: "My Service Orders", path: "/dashboard/user/my-service-orders" }, // 👈 ADDED
       { icon: <Car size={20} />, label: "Rides", path: "/dashboard/user/rides" },
-      { icon: <BarChart3 size={20} />, label: "Analytics", path: `${getDashboardPath(user!)}/analytics` },
-      { icon: <MessageCircle size={20} />, label: "Messages", path: `${getDashboardPath(user!)}/messages` },
+      // { icon: <BarChart3 size={20} />, label: "Analytics", path: `${getDashboardPath(user!)}/analytics` },
+      // { icon: <MessageCircle size={20} />, label: "Messages", path: `${getDashboardPath(user!)}/messages` },
       { icon: <Settings size={20} />, label: "Settings", path: `${getDashboardPath(user!)}/settings` },
     ]
   }
@@ -159,7 +159,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       ...baseItems, // Overview + Profile
       ...vendorItems,
       { icon: <BarChart3 size={20} />, label: "Analytics", path: `${getDashboardPath(user!)}/analytics` },
-      { icon: <MessageCircle size={20} />, label: "Messages", path: `${getDashboardPath(user!)}/messages` },
+      // { icon: <MessageCircle size={20} />, label: "Messages", path: `${getDashboardPath(user!)}/messages` },
       { icon: <Shield size={20} />, label: "Compliance", path: `${getDashboardPath(user!)}/compliance` },
       { icon: <Settings size={20} />, label: "Settings", path: `${getDashboardPath(user!)}/settings` },
     ]
