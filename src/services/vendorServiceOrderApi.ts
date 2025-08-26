@@ -4,25 +4,27 @@ import { apiClient } from "./apiClient"
 // -------------------
 // Types
 // -------------------
-export interface VendorServiceOrder {
+export interface ServiceOrder {
   id: number
   user_id: number
   service_vendor_id: number
   service_pricing_id: number
   deadline: string
   requirements: string
-  status: string
+  status: "pending" | "accepted" | "in_progress" | "completed" | "cancelled"
   total_amount: number
-  payment_status: string
+  payment_status: "pending" | "paid" | "refunded"
   vendor_response?: string
   created_at: string
   updated_at: string
 
+  // Relations
   user?: {
     id: number
     name: string
     phone: string
     email: string
+    profile_picture?: string
   }
 
   service_pricing?: {
@@ -32,25 +34,26 @@ export interface VendorServiceOrder {
   }
 }
 
-export interface VendorOrderResponse {
-  data: VendorServiceOrder[]
+export interface ServiceOrderResponse {
+  data: ServiceOrder[]
   message?: string
 }
 
 // -------------------
-// API Service
+// Vendor Service API
 // -------------------
 export const vendorServiceOrderApi = {
   /**
-   * Get all service orders for the logged-in vendor
+   * Get all orders for the logged-in vendor
    */
-  getVendorOrders: async (): Promise<VendorOrderResponse> => {
+  getMyOrders: async (): Promise<ServiceOrderResponse> => {
     try {
-      const response = await apiClient.get<VendorOrderResponse>(
+      const response = await apiClient.get<ServiceOrderResponse>(
         "/api/vendor/service-orders",
         true
       )
 
+      // Normalize amounts
       if (response?.data) {
         response.data = response.data.map((order: any) => ({
           ...order,
@@ -63,7 +66,7 @@ export const vendorServiceOrderApi = {
 
       return response
     } catch (error) {
-      console.error("Error fetching vendor service orders:", error)
+      console.error("Error fetching vendor orders:", error)
       return { data: [] }
     }
   },
@@ -75,7 +78,7 @@ export const vendorServiceOrderApi = {
     orderId: number,
     responseMessage?: string
   ): Promise<{ message: string }> => {
-    return apiClient.patch<{ message: string }>(
+    return apiClient.post<{ message: string }>(
       `/api/vendor/service-orders/${orderId}/accept`,
       { vendor_response: responseMessage },
       true
@@ -83,43 +86,15 @@ export const vendorServiceOrderApi = {
   },
 
   /**
-   * Decline an order
+   * Update an order status
    */
-  declineOrder: async (
+  updateOrder: async (
     orderId: number,
-    reason?: string
+    updateData: { status: "in_progress" | "completed" | "cancelled" }
   ): Promise<{ message: string }> => {
     return apiClient.patch<{ message: string }>(
-      `/api/vendor/service-orders/${orderId}/decline`,
-      { vendor_response: reason },
-      true
-    )
-  },
-
-  /**
-   * Mark order as completed
-   */
-  completeOrder: async (
-    orderId: number
-  ): Promise<{ message: string }> => {
-    return apiClient.patch<{ message: string }>(
-      `/api/vendor/service-orders/${orderId}/complete`,
-      {},
-      true
-    )
-  },
-
-  /**
-   * Update order status (generic)
-   */
-  updateOrderStatus: async (
-    orderId: number,
-    status: string,
-    responseMessage?: string
-  ): Promise<{ message: string }> => {
-    return apiClient.patch<{ message: string }>(
-      `/api/vendor/service-orders/${orderId}/status`,
-      { status, vendor_response: responseMessage },
+      `/api/vendor/service-orders/${orderId}`,
+      updateData,
       true
     )
   },

@@ -2,15 +2,30 @@
 
 import type React from "react"
 import { useState, useEffect } from "react"
-import { Calendar, User, Phone, MessageSquare, Clock, CheckCircle, XCircle, AlertCircle } from "lucide-react"
+import {
+  Calendar,
+  User,
+  Phone,
+  MessageSquare,
+  Clock,
+  CheckCircle,
+  XCircle,
+  AlertCircle,
+} from "lucide-react"
+
 import DashboardLayout from "../../../components/dashboard/DashboardLayout"
-import { vendorServiceOrderApi, type VendorOrderResponse } from "../../../services/vendorServiceOrderApi"
+import {
+  vendorServiceOrderApi,
+  type ServiceOrder,
+} from "../../../services/vendorServiceOrderApi"
 
 const ServiceOrders: React.FC = () => {
-  const [orders, setOrders] = useState<VendorOrderResponse[]>([])
+  const [orders, setOrders] = useState<ServiceOrder[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [selectedTab, setSelectedTab] = useState<"all" | "pending" | "active" | "completed">("all")
+  const [selectedTab, setSelectedTab] = useState<
+    "all" | "pending" | "active" | "completed"
+  >("all")
   const [respondingTo, setRespondingTo] = useState<number | null>(null)
   const [vendorResponse, setVendorResponse] = useState("")
 
@@ -24,13 +39,12 @@ const ServiceOrders: React.FC = () => {
       setError(null)
       const response = await vendorServiceOrderApi.getMyOrders()
 
-      // Ensure we have an array
       const ordersData = Array.isArray(response.data) ? response.data : []
       setOrders(ordersData)
     } catch (err) {
       setError("Failed to fetch your service orders")
       console.error("Error fetching orders:", err)
-      setOrders([]) // Set empty array on error
+      setOrders([])
     } finally {
       setLoading(false)
     }
@@ -49,7 +63,10 @@ const ServiceOrders: React.FC = () => {
     }
   }
 
-  const handleUpdateOrderStatus = async (orderId: number, status: "in_progress" | "completed" | "cancelled") => {
+  const handleUpdateOrderStatus = async (
+    orderId: number,
+    status: "in_progress" | "completed" | "cancelled"
+  ) => {
     const confirmMessage = {
       in_progress: "Mark this order as in progress?",
       completed: "Mark this order as completed?",
@@ -148,7 +165,9 @@ const ServiceOrders: React.FC = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Service Orders</h1>
-            <p className="text-gray-600">Manage incoming service requests from customers</p>
+            <p className="text-gray-600">
+              Manage incoming service requests from customers
+            </p>
           </div>
         </div>
 
@@ -157,16 +176,24 @@ const ServiceOrders: React.FC = () => {
           <nav className="flex space-x-8">
             {[
               { id: "all", name: "All Orders", count: orders.length },
-              { id: "pending", name: "Pending", count: orders.filter((o) => o.status === "pending").length },
+              {
+                id: "pending",
+                name: "Pending",
+                count: orders.filter((o) => o.status === "pending").length,
+              },
               {
                 id: "active",
                 name: "Active",
-                count: orders.filter((o) => ["accepted", "in_progress"].includes(o.status)).length,
+                count: orders.filter((o) =>
+                  ["accepted", "in_progress"].includes(o.status)
+                ).length,
               },
               {
                 id: "completed",
                 name: "Completed",
-                count: orders.filter((o) => ["completed", "cancelled"].includes(o.status)).length,
+                count: orders.filter((o) =>
+                  ["completed", "cancelled"].includes(o.status)
+                ).length,
               },
             ].map((tab) => (
               <button
@@ -182,7 +209,9 @@ const ServiceOrders: React.FC = () => {
                 {tab.count > 0 && (
                   <span
                     className={`ml-2 px-2 py-0.5 rounded-full text-xs ${
-                      selectedTab === tab.id ? "bg-blue-100 text-blue-600" : "bg-gray-100 text-gray-600"
+                      selectedTab === tab.id
+                        ? "bg-blue-100 text-blue-600"
+                        : "bg-gray-100 text-gray-600"
                     }`}
                   >
                     {tab.count}
@@ -209,7 +238,9 @@ const ServiceOrders: React.FC = () => {
             <div className="text-center py-12">
               <div className="text-6xl mb-4">📋</div>
               <h3 className="text-xl font-bold text-gray-900 mb-2">
-                {selectedTab === "all" ? "No service orders yet" : `No ${selectedTab} orders`}
+                {selectedTab === "all"
+                  ? "No service orders yet"
+                  : `No ${selectedTab} orders`}
               </h3>
               <p className="text-gray-600">
                 {selectedTab === "all"
@@ -219,7 +250,10 @@ const ServiceOrders: React.FC = () => {
             </div>
           ) : (
             filteredOrders.map((order) => (
-              <div key={order.id} className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+              <div
+                key={order.id}
+                className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6"
+              >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
@@ -227,10 +261,14 @@ const ServiceOrders: React.FC = () => {
                         {order.service_pricing?.title || "Service Order"}
                       </h3>
                       <div
-                        className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}
+                        className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
+                          order.status
+                        )}`}
                       >
                         {getStatusIcon(order.status)}
-                        <span className="capitalize">{order.status.replace("_", " ")}</span>
+                        <span className="capitalize">
+                          {order.status.replace("_", " ")}
+                        </span>
                       </div>
                     </div>
 
@@ -245,21 +283,32 @@ const ServiceOrders: React.FC = () => {
                       </div>
                       <div className="flex items-center gap-2">
                         <Calendar size={14} />
-                        <span>Deadline: {new Date(order.deadline).toLocaleDateString()}</span>
+                        <span>
+                          Deadline:{" "}
+                          {new Date(order.deadline).toLocaleDateString()}
+                        </span>
                       </div>
                       <div className="flex items-center gap-2">
                         <span
-                          className={`px-2 py-0.5 rounded-full text-xs font-medium ${getPaymentStatusColor(order.payment_status)}`}
+                          className={`px-2 py-0.5 rounded-full text-xs font-medium ${getPaymentStatusColor(
+                            order.payment_status
+                          )}`}
                         >
-                          Payment: {order.payment_status.charAt(0).toUpperCase() + order.payment_status.slice(1)}
+                          Payment:{" "}
+                          {order.payment_status.charAt(0).toUpperCase() +
+                            order.payment_status.slice(1)}
                         </span>
                       </div>
                     </div>
                   </div>
 
                   <div className="text-right">
-                    <div className="text-2xl font-bold text-green-600 mb-1">₦{order.total_amount.toLocaleString()}</div>
-                    <div className="text-xs text-gray-500">Order #{order.id}</div>
+                    <div className="text-2xl font-bold text-green-600 mb-1">
+                      ₦{order.total_amount.toLocaleString()}
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      Order #{order.id}
+                    </div>
                   </div>
                 </div>
 
@@ -267,9 +316,13 @@ const ServiceOrders: React.FC = () => {
                 <div className="mb-4">
                   <div className="flex items-center gap-2 mb-2">
                     <MessageSquare size={14} className="text-gray-400" />
-                    <span className="text-sm font-medium text-gray-700">Customer Requirements:</span>
+                    <span className="text-sm font-medium text-gray-700">
+                      Customer Requirements:
+                    </span>
                   </div>
-                  <p className="text-sm text-gray-600 bg-gray-50 rounded-lg p-3">{order.requirements}</p>
+                  <p className="text-sm text-gray-600 bg-gray-50 rounded-lg p-3">
+                    {order.requirements}
+                  </p>
                 </div>
 
                 {/* Vendor Response */}
@@ -277,9 +330,13 @@ const ServiceOrders: React.FC = () => {
                   <div className="mb-4">
                     <div className="flex items-center gap-2 mb-2">
                       <MessageSquare size={14} className="text-blue-400" />
-                      <span className="text-sm font-medium text-blue-700">Your Response:</span>
+                      <span className="text-sm font-medium text-blue-700">
+                        Your Response:
+                      </span>
                     </div>
-                    <p className="text-sm text-blue-600 bg-blue-50 rounded-lg p-3">{order.vendor_response}</p>
+                    <p className="text-sm text-blue-600 bg-blue-50 rounded-lg p-3">
+                      {order.vendor_response}
+                    </p>
                   </div>
                 )}
 
@@ -330,7 +387,9 @@ const ServiceOrders: React.FC = () => {
                             Accept Order
                           </button>
                           <button
-                            onClick={() => handleUpdateOrderStatus(order.id, "cancelled")}
+                            onClick={() =>
+                              handleUpdateOrderStatus(order.id, "cancelled")
+                            }
                             className="px-4 py-2 text-red-600 border border-red-300 rounded-lg hover:bg-red-50 transition-colors text-sm"
                           >
                             Decline
@@ -342,7 +401,9 @@ const ServiceOrders: React.FC = () => {
 
                   {order.status === "accepted" && (
                     <button
-                      onClick={() => handleUpdateOrderStatus(order.id, "in_progress")}
+                      onClick={() =>
+                        handleUpdateOrderStatus(order.id, "in_progress")
+                      }
                       className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors text-sm"
                     >
                       Start Work
@@ -351,7 +412,9 @@ const ServiceOrders: React.FC = () => {
 
                   {order.status === "in_progress" && (
                     <button
-                      onClick={() => handleUpdateOrderStatus(order.id, "completed")}
+                      onClick={() =>
+                        handleUpdateOrderStatus(order.id, "completed")
+                      }
                       className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
                     >
                       Mark Complete
@@ -372,8 +435,12 @@ const ServiceOrders: React.FC = () => {
                 {/* Order Timeline */}
                 <div className="mt-4 pt-4 border-t border-gray-100">
                   <div className="text-xs text-gray-500">
-                    <div>Received: {new Date(order.created_at).toLocaleString()}</div>
-                    <div>Last Updated: {new Date(order.updated_at).toLocaleString()}</div>
+                    <div>
+                      Received: {new Date(order.created_at).toLocaleString()}
+                    </div>
+                    <div>
+                      Last Updated: {new Date(order.updated_at).toLocaleString()}
+                    </div>
                   </div>
                 </div>
               </div>

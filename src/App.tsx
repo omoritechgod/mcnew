@@ -31,6 +31,8 @@ import ApartmentListingForm from "./pages/dashboard/vendor/ApartmentListing"
 import PrivateRouteVendor from "./components/vendor/PrivateRouteVendor"
 import ListedPropertiesPage from "./pages/dashboard/apartment/ListedPropertiesPage"
 import MyBookings from "./pages/dashboard/user/MyBookings"
+import MyServiceOrders from "./pages/dashboard/user/MyServiceOrders"
+
 
 // Import profile pages
 import UserProfile from "./pages/dashboard/user/profile"
@@ -72,6 +74,7 @@ function App() {
           {/* Dashboard Routes */}
           <Route path="/dashboard/user" element={<UserDashboard />} />
           <Route path="/dashboard/user/bookings" element={<MyBookings />} />
+          <Route path="/dashboard/user/my-service-orders" element={<MyServiceOrders />}/> 
           <Route path="/dashboard/mechanic" element={<MechanicDashboard />} />
           <Route path="/dashboard/rider" element={<RiderDashboard />} />
           <Route path="/dashboard/product-vendor" element={<ProductVendorDashboard />} />

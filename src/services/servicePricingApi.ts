@@ -38,7 +38,7 @@ export const servicePricingApi = {
   /**
    * Get all pricings for the authenticated vendor
    */
-  getVendorPricings: async (): Promise<ServicePricingResponse> => {
+  getMyPricings: async (): Promise<ServicePricingResponse> => {
     try {
       const response = await apiClient.get<ServicePricingResponse>(
         "/api/vendor/service-pricings",

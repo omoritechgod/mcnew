@@ -46,12 +46,12 @@ class ApiClient {
       method = 'GET',
       headers = {},
       body,
-      requiresAuth = true
+      requiresAuth = true,
     } = config;
 
     const url = `${this.baseURL}${endpoint}`;
-    
-    const requestHeaders = requiresAuth 
+
+    const requestHeaders = requiresAuth
       ? { ...this.getAuthHeaders(), ...headers }
       : { 'Content-Type': 'application/json', 'Accept': 'application/json', ...headers };
 
@@ -63,11 +63,16 @@ class ApiClient {
     if (body) {
       if (body instanceof FormData) {
         // For FormData, remove Content-Type to let browser set it with boundary
-        const formDataHeaders = requiresAuth 
+        const formDataHeaders: Record<string, string | undefined> = requiresAuth
           ? { ...this.getFormDataHeaders(), ...headers }
           : { 'Accept': 'application/json', ...headers };
-        delete formDataHeaders['Content-Type'];
-        requestConfig.headers = formDataHeaders;
+
+        // Safely delete without TypeScript error
+        if ('Content-Type' in formDataHeaders) {
+          delete formDataHeaders['Content-Type'];
+        }
+
+        requestConfig.headers = formDataHeaders as Record<string, string>;
         requestConfig.body = body;
       } else {
         requestConfig.body = JSON.stringify(body);
@@ -76,7 +81,7 @@ class ApiClient {
 
     try {
       const response = await fetch(url, requestConfig);
-      
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ message: 'Network error' }));
         throw new Error(errorData.message || `HTTP ${response.status}`);
@@ -100,6 +105,10 @@ class ApiClient {
 
   async put<T = any>(endpoint: string, data?: any, requiresAuth = true): Promise<T> {
     return this.request<T>(endpoint, { method: 'PUT', body: data, requiresAuth });
+  }
+
+  async patch<T = any>(endpoint: string, data?: any, requiresAuth = true): Promise<T> {
+    return this.request<T>(endpoint, { method: 'PATCH', body: data, requiresAuth });
   }
 
   async delete<T = any>(endpoint: string, requiresAuth = true): Promise<T> {
