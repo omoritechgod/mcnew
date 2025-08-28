@@ -12,6 +12,7 @@ import {
   XCircle,
   AlertCircle,
   ClipboardList,
+  CreditCard,
 } from "lucide-react"
 
 import DashboardLayout from "../../../components/dashboard/DashboardLayout"
@@ -54,14 +55,41 @@ const MyServiceOrders: React.FC = () => {
     }
   }
 
+  const handleInitiatePayment = async (orderId: number) => {
+    try {
+      const response = await serviceOrderApi.initiatePayment(orderId)
+      
+      if (response.data.link) {
+        // Redirect to Flutterwave payment page
+        window.location.href = response.data.link
+      }
+    } catch (error) {
+      console.error("Error initiating payment:", error)
+      alert("Failed to initiate payment. Please try again.")
+    }
+  }
+
+  const handleMarkCompleted = async (orderId: number) => {
+    if (!confirm("Are you sure the service has been completed to your satisfaction?")) return
+    
+    try {
+      await serviceOrderApi.markCompleted(orderId)
+      await fetchOrders()
+      alert("Service marked as completed! Payment has been released to the vendor.")
+    } catch (error) {
+      console.error("Error marking order as completed:", error)
+      alert("Failed to mark order as completed. Please try again.")
+    }
+  }
+
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case "pending":
+      case "pending_vendor_response":
         return <Clock size={16} className="text-yellow-600" />
-      case "accepted":
+      case "awaiting_payment":
         return <CheckCircle size={16} className="text-blue-600" />
-      case "in_progress":
-        return <AlertCircle size={16} className="text-orange-600" />
+      case "paid":
+        return <AlertCircle size={16} className="text-green-600" />
       case "completed":
         return <CheckCircle size={16} className="text-green-600" />
       case "cancelled":
@@ -73,12 +101,12 @@ const MyServiceOrders: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "pending":
+      case "pending_vendor_response":
         return "bg-yellow-100 text-yellow-800"
-      case "accepted":
+      case "awaiting_payment":
         return "bg-blue-100 text-blue-800"
-      case "in_progress":
-        return "bg-orange-100 text-orange-800"
+      case "paid":
+        return "bg-green-100 text-green-800"
       case "completed":
         return "bg-green-100 text-green-800"
       case "cancelled":
@@ -91,9 +119,9 @@ const MyServiceOrders: React.FC = () => {
   const filteredOrders = orders.filter((order) => {
     switch (selectedTab) {
       case "pending":
-        return order.status === "pending"
+        return order.status === "pending_vendor_response"
       case "active":
-        return ["accepted", "in_progress"].includes(order.status)
+        return ["awaiting_payment", "paid"].includes(order.status)
       case "completed":
         return ["completed", "cancelled"].includes(order.status)
       default:
@@ -184,7 +212,7 @@ const MyServiceOrders: React.FC = () => {
           {filteredOrders.length === 0 ? (
             <div className="text-center py-12">
               <div className="text-6xl mb-4">📋</div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
                 {selectedTab === "all" ? "No service orders yet" : `No ${selectedTab} orders`}
               </h3>
               <p className="text-gray-600">
@@ -200,15 +228,19 @@ const MyServiceOrders: React.FC = () => {
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <h3 className="text-lg font-semibold text-gray-900">
-                        {order.service_pricing?.title || "Service Order"}
+                        {order.service_pricing?.title || order.service_vendor.service_name}
                       </h3>
                       <div
-                        className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
+                        className={`px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${getStatusColor(
                           order.status
                         )}`}
                       >
                         {getStatusIcon(order.status)}
-                        <span className="capitalize">{order.status.replace("_", " ")}</span>
+                        <span className="capitalize">
+                          {order.status === "pending_vendor_response" ? "Pending Response" :
+                           order.status === "awaiting_payment" ? "Awaiting Payment" :
+                           order.status.replace("_", " ")}
+                        </span>
                       </div>
                     </div>
 
@@ -219,7 +251,15 @@ const MyServiceOrders: React.FC = () => {
                       </div>
                       <div className="flex items-center gap-2">
                         <Phone size={14} />
-                        <span>{order.service_vendor?.vendor?.user?.phone || "Phone not available"}</span>
+                        <span>
+                          {order.status === "paid" || order.status === "completed"
+                            ? order.service_vendor?.vendor?.user?.phone || order.service_vendor?.phone
+                            : "Phone hidden until payment"}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Calendar size={14} />
+                        <span>Placed: {new Date(order.created_at).toLocaleDateString()}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <Calendar size={14} />
@@ -227,35 +267,25 @@ const MyServiceOrders: React.FC = () => {
                       </div>
                     </div>
                   </div>
-
                   <div className="text-right">
-                    <div className="text-2xl font-bold text-green-600 mb-1">₦{order.total_amount.toLocaleString()}</div>
+                    <div className="text-2xl font-bold text-green-600 mb-1">₦{parseFloat(order.amount).toLocaleString()}</div>
                     <div className="text-xs text-gray-500">Order #{order.id}</div>
                   </div>
                 </div>
 
-                {/* Requirements */}
-                <div className="mb-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <MessageSquare size={14} className="text-gray-400" />
-                    <span className="text-sm font-medium text-gray-700">Your Requirements:</span>
-                  </div>
-                  <p className="text-sm text-gray-600 bg-gray-50 rounded-lg p-3">{order.requirements}</p>
-                </div>
-
-                {/* Vendor Response */}
-                {order.vendor_response && (
+                {/* Notes */}
+                {order.notes && (
                   <div className="mb-4">
                     <div className="flex items-center gap-2 mb-2">
-                      <MessageSquare size={14} className="text-blue-400" />
-                      <span className="text-sm font-medium text-blue-700">Vendor Response:</span>
+                      <MessageSquare size={14} className="text-gray-400" />
+                      <span className="text-sm font-medium text-gray-700">Your Requirements:</span>
                     </div>
-                    <p className="text-sm text-blue-600 bg-blue-50 rounded-lg p-3">{order.vendor_response}</p>
+                    <p className="text-sm text-gray-600 bg-gray-50 rounded-lg p-3">{order.notes}</p>
                   </div>
                 )}
 
                 {/* Action Buttons */}
-                {order.status === "pending" && (
+                {order.status === "pending_vendor_response" && (
                   <div className="flex gap-3 pt-4 border-t border-gray-100">
                     <button
                       onClick={() => handleCancelOrder(order.id)}
@@ -263,6 +293,39 @@ const MyServiceOrders: React.FC = () => {
                     >
                       Cancel Order
                     </button>
+                  </div>
+                )}
+
+                {order.status === "awaiting_payment" && (
+                  <div className="flex gap-3 pt-4 border-t border-gray-100">
+                    <button
+                      onClick={() => handleInitiatePayment(order.id)}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm flex items-center gap-2"
+                    >
+                      <CreditCard size={16} />
+                      Pay Now - ₦{parseFloat(order.amount).toLocaleString()}
+                    </button>
+                  </div>
+                )}
+
+                {order.status === "paid" && (
+                  <div className="flex gap-3 pt-4 border-t border-gray-100">
+                    <button
+                      onClick={() => handleMarkCompleted(order.id)}
+                      className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm flex items-center gap-2"
+                    >
+                      <CheckCircle size={16} />
+                      Mark as Completed
+                    </button>
+                    {(order.service_vendor?.vendor?.user?.phone || order.service_vendor?.phone) && (
+                      <a
+                        href={`tel:${order.service_vendor?.vendor?.user?.phone || order.service_vendor?.phone}`}
+                        className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm flex items-center gap-2"
+                      >
+                        <Phone size={16} />
+                        Call Vendor
+                      </a>
+                    )}
                   </div>
                 )}
 

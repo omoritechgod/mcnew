@@ -1,6 +1,6 @@
 "use client"
 
-import type React from "react"
+import React from "react"
 import { useState, useEffect } from "react"
 import {
   Calendar,
@@ -14,10 +14,7 @@ import {
 } from "lucide-react"
 
 import DashboardLayout from "../../../components/dashboard/DashboardLayout"
-import {
-  vendorServiceOrderApi,
-  type ServiceOrder,
-} from "../../../services/vendorServiceOrderApi"
+import { vendorServiceOrderApi, type ServiceOrder } from "../../../services/vendorServiceOrderApi"
 
 const ServiceOrders: React.FC = () => {
   const [orders, setOrders] = useState<ServiceOrder[]>([])
@@ -39,7 +36,17 @@ const ServiceOrders: React.FC = () => {
       setError(null)
       const response = await vendorServiceOrderApi.getMyOrders()
 
-      const ordersData = Array.isArray(response.data) ? response.data : []
+      // Handle both direct array and nested data structure
+      let ordersData: ServiceOrder[] = []
+      if (Array.isArray(response)) {
+        ordersData = response
+      } else if (response?.data && Array.isArray(response.data)) {
+        ordersData = response.data
+      } else if (Array.isArray(response.data)) {
+        ordersData = response.data
+      }
+      
+      console.log('Fetched orders:', ordersData)
       setOrders(ordersData)
     } catch (err) {
       setError("Failed to fetch your service orders")
@@ -52,10 +59,10 @@ const ServiceOrders: React.FC = () => {
 
   const handleAcceptOrder = async (orderId: number) => {
     try {
-      await vendorServiceOrderApi.acceptOrder(orderId, vendorResponse)
-      await fetchMyOrders()
+      await vendorServiceOrderApi.acceptOrder(orderId)
       setRespondingTo(null)
       setVendorResponse("")
+      await fetchMyOrders()
       alert("Order accepted successfully!")
     } catch (error) {
       console.error("Error accepting order:", error)
@@ -63,35 +70,39 @@ const ServiceOrders: React.FC = () => {
     }
   }
 
-  const handleUpdateOrderStatus = async (
-    orderId: number,
-    status: "in_progress" | "completed" | "cancelled"
-  ) => {
-    const confirmMessage = {
-      in_progress: "Mark this order as in progress?",
-      completed: "Mark this order as completed?",
-      cancelled: "Cancel this order?",
-    }
-
-    if (!confirm(confirmMessage[status])) return
-
+  const handleDeclineOrder = async (orderId: number) => {
+    if (!confirm("Are you sure you want to decline this order?")) return
+    
     try {
-      await vendorServiceOrderApi.updateOrder(orderId, { status })
+      await vendorServiceOrderApi.declineOrder(orderId)
+      setRespondingTo(null)
+      setVendorResponse("")
       await fetchMyOrders()
-      alert(`Order ${status.replace("_", " ")} successfully!`)
+      alert("Order declined successfully!")
     } catch (error) {
-      console.error("Error updating order:", error)
-      alert("Failed to update order. Please try again.")
+      console.error("Error declining order:", error)
+      alert("Failed to decline order. Please try again.")
+    }
+  }
+
+  const handleUpdateOrderStatus = async (orderId: number, newStatus: string) => {
+    try {
+      // This would need a backend endpoint for status updates
+      console.log(`Updating order ${orderId} to status: ${newStatus}`)
+      await fetchMyOrders()
+    } catch (error) {
+      console.error("Error updating order status:", error)
+      alert("Failed to update order status")
     }
   }
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case "pending":
+      case "pending_vendor_response":
         return <Clock size={16} className="text-yellow-600" />
-      case "accepted":
+      case "awaiting_payment":
         return <CheckCircle size={16} className="text-blue-600" />
-      case "in_progress":
+      case "paid":
         return <AlertCircle size={16} className="text-orange-600" />
       case "completed":
         return <CheckCircle size={16} className="text-green-600" />
@@ -104,11 +115,11 @@ const ServiceOrders: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "pending":
+      case "pending_vendor_response":
         return "bg-yellow-100 text-yellow-800"
-      case "accepted":
+      case "awaiting_payment":
         return "bg-blue-100 text-blue-800"
-      case "in_progress":
+      case "paid":
         return "bg-orange-100 text-orange-800"
       case "completed":
         return "bg-green-100 text-green-800"
@@ -119,25 +130,12 @@ const ServiceOrders: React.FC = () => {
     }
   }
 
-  const getPaymentStatusColor = (status: string) => {
-    switch (status) {
-      case "pending":
-        return "bg-yellow-100 text-yellow-800"
-      case "paid":
-        return "bg-green-100 text-green-800"
-      case "refunded":
-        return "bg-blue-100 text-blue-800"
-      default:
-        return "bg-gray-100 text-gray-800"
-    }
-  }
-
   const filteredOrders = orders.filter((order) => {
     switch (selectedTab) {
       case "pending":
-        return order.status === "pending"
+        return order.status === "pending_vendor_response"
       case "active":
-        return ["accepted", "in_progress"].includes(order.status)
+        return ["awaiting_payment", "paid"].includes(order.status)
       case "completed":
         return ["completed", "cancelled"].includes(order.status)
       default:
@@ -179,13 +177,13 @@ const ServiceOrders: React.FC = () => {
               {
                 id: "pending",
                 name: "Pending",
-                count: orders.filter((o) => o.status === "pending").length,
+                count: orders.filter((o) => o.status === "pending_vendor_response").length,
               },
               {
                 id: "active",
                 name: "Active",
                 count: orders.filter((o) =>
-                  ["accepted", "in_progress"].includes(o.status)
+                  ["awaiting_payment", "paid"].includes(o.status)
                 ).length,
               },
               {
@@ -258,7 +256,7 @@ const ServiceOrders: React.FC = () => {
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <h3 className="text-lg font-semibold text-gray-900">
-                        {order.service_pricing?.title || "Service Order"}
+                        {order.service_pricing?.title || "General Service"}
                       </h3>
                       <div
                         className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
@@ -275,36 +273,29 @@ const ServiceOrders: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
                       <div className="flex items-center gap-2">
                         <User size={14} />
-                        <span>{order.user?.name || "Customer"}</span>
+                        <span>Customer: {order.user?.name || "Unknown"}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <Phone size={14} />
-                        <span>{order.user?.phone || "Phone not available"}</span>
+                        <span>Phone: {order.user?.phone || "Not available"}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <Calendar size={14} />
                         <span>
-                          Deadline:{" "}
-                          {new Date(order.deadline).toLocaleDateString()}
+                          Ordered:{" "}
+                          {new Date(order.created_at).toLocaleDateString()}
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span
-                          className={`px-2 py-0.5 rounded-full text-xs font-medium ${getPaymentStatusColor(
-                            order.payment_status
-                          )}`}
-                        >
-                          Payment:{" "}
-                          {order.payment_status.charAt(0).toUpperCase() +
-                            order.payment_status.slice(1)}
-                        </span>
+                        <Calendar size={14} />
+                        <span>Deadline: {order.deadline ? new Date(order.deadline).toLocaleDateString() : "Not specified"}</span>
                       </div>
                     </div>
                   </div>
 
                   <div className="text-right">
                     <div className="text-2xl font-bold text-green-600 mb-1">
-                      ₦{order.total_amount.toLocaleString()}
+                      ₦{parseFloat(order.amount).toLocaleString()}
                     </div>
                     <div className="text-xs text-gray-500">
                       Order #{order.id}
@@ -313,17 +304,19 @@ const ServiceOrders: React.FC = () => {
                 </div>
 
                 {/* Requirements */}
-                <div className="mb-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <MessageSquare size={14} className="text-gray-400" />
-                    <span className="text-sm font-medium text-gray-700">
-                      Customer Requirements:
-                    </span>
+                {order.notes && (
+                  <div className="mb-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <MessageSquare size={14} className="text-gray-400" />
+                      <span className="text-sm font-medium text-gray-700">
+                        Customer Requirements:
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-600 bg-gray-50 rounded-lg p-3">
+                      {order.notes}
+                    </p>
                   </div>
-                  <p className="text-sm text-gray-600 bg-gray-50 rounded-lg p-3">
-                    {order.requirements}
-                  </p>
-                </div>
+                )}
 
                 {/* Vendor Response */}
                 {order.vendor_response && (
@@ -341,7 +334,7 @@ const ServiceOrders: React.FC = () => {
                 )}
 
                 {/* Response Form for Pending Orders */}
-                {order.status === "pending" && respondingTo === order.id && (
+                {order.status === "pending_vendor_response" && respondingTo === order.id && (
                   <div className="mb-4 p-4 bg-blue-50 rounded-lg">
                     <label className="block text-sm font-medium text-blue-700 mb-2">
                       Response to Customer (Optional):
@@ -358,7 +351,7 @@ const ServiceOrders: React.FC = () => {
 
                 {/* Action Buttons */}
                 <div className="flex gap-3 pt-4 border-t border-gray-100">
-                  {order.status === "pending" && (
+                  {order.status === "pending_vendor_response" && (
                     <>
                       {respondingTo === order.id ? (
                         <>
@@ -387,9 +380,7 @@ const ServiceOrders: React.FC = () => {
                             Accept Order
                           </button>
                           <button
-                            onClick={() =>
-                              handleUpdateOrderStatus(order.id, "cancelled")
-                            }
+                            onClick={() => handleDeclineOrder(order.id)}
                             className="px-4 py-2 text-red-600 border border-red-300 rounded-lg hover:bg-red-50 transition-colors text-sm"
                           >
                             Decline
@@ -399,29 +390,27 @@ const ServiceOrders: React.FC = () => {
                     </>
                   )}
 
-                  {order.status === "accepted" && (
+                  {order.status === "awaiting_payment" && (
                     <button
-                      onClick={() =>
-                        handleUpdateOrderStatus(order.id, "in_progress")
-                      }
-                      className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors text-sm"
+                      disabled
+                      className="px-4 py-2 bg-blue-100 text-blue-800 rounded-lg cursor-not-allowed transition-colors text-sm"
                     >
-                      Start Work
+                      Waiting for Payment
                     </button>
                   )}
 
-                  {order.status === "in_progress" && (
+                  {order.status === "paid" && (
                     <button
                       onClick={() =>
                         handleUpdateOrderStatus(order.id, "completed")
                       }
                       className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
                     >
-                      Mark Complete
+                      Mark as Completed
                     </button>
                   )}
 
-                  {order.user?.phone && order.status !== "pending" && (
+                  {order.user?.phone && order.status !== "pending_vendor_response" && (
                     <a
                       href={`tel:${order.user.phone}`}
                       className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm flex items-center gap-2"
@@ -438,9 +427,11 @@ const ServiceOrders: React.FC = () => {
                     <div>
                       Received: {new Date(order.created_at).toLocaleString()}
                     </div>
-                    <div>
-                      Last Updated: {new Date(order.updated_at).toLocaleString()}
-                    </div>
+                    {order.deadline && (
+                      <div>
+                        Deadline: {new Date(order.deadline).toLocaleDateString()}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

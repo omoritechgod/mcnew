@@ -31,36 +31,29 @@ const KYCReview: React.FC = () => {
   }, []);
 
   const fetchVerifications = async () => {
-    console.log('🔍 Fetching KYC verifications...');
     try {
       const response = await adminApi.getKYCVerifications();
-      console.log('✅ KYC verifications response:', response);
       setVerifications(response.data);
-      setError(''); // Clear any previous errors
     } catch (error: any) {
       console.error('Error fetching KYC verifications:', error);
-      setError(`Failed to load KYC verifications: ${error.message || 'Unknown error'}`);
+      setError('Failed to load KYC verifications');
       // Set empty array for demo
       setVerifications([]);
     } finally {
-      console.log('🏁 Finished fetching KYC verifications');
       setIsLoading(false);
     }
   };
 
   const handleApprove = async (id: number) => {
-    console.log(`🔍 Approving KYC verification ${id}...`);
     setIsProcessing(true);
-    setError(''); // Clear any previous errors
     try {
       await adminApi.approveKYC(id);
-      console.log(`✅ KYC verification ${id} approved successfully`);
       await fetchVerifications(); // Refresh the list
       setShowModal(false);
       setSelectedVerification(null);
     } catch (error: any) {
       console.error('Error approving KYC:', error);
-      setError(`Failed to approve KYC verification: ${error.message || 'Unknown error'}`);
+      setError('Failed to approve KYC verification');
     } finally {
       setIsProcessing(false);
     }
@@ -72,19 +65,16 @@ const KYCReview: React.FC = () => {
       return;
     }
 
-    console.log(`🔍 Rejecting KYC verification ${id} with reason: ${rejectionReason}`);
     setIsProcessing(true);
-    setError(''); // Clear any previous errors
     try {
       await adminApi.rejectKYC(id, rejectionReason);
-      console.log(`✅ KYC verification ${id} rejected successfully`);
       await fetchVerifications(); // Refresh the list
       setShowModal(false);
       setSelectedVerification(null);
       setRejectionReason('');
     } catch (error: any) {
       console.error('Error rejecting KYC:', error);
-      setError(`Failed to reject KYC verification: ${error.message || 'Unknown error'}`);
+      setError('Failed to reject KYC verification');
     } finally {
       setIsProcessing(false);
     }
@@ -223,13 +213,13 @@ const KYCReview: React.FC = () => {
                       <td className="px-6 py-4">
                         <span className="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 text-gray-800 text-sm rounded-full">
                           {verification.document_type === 'nin' ? <User size={14} /> : <Building size={14} />}
-                          {verification.document_type ? verification.document_type.toUpperCase() : 'N/A'}
+                          {verification.document_type?.toUpperCase() || 'N/A'}
                         </span>
                       </td>
                       <td className="px-6 py-4">
                         <span className={`inline-flex items-center gap-1 px-2 py-1 text-sm font-medium rounded-full ${getStatusColor(verification.status)}`}>
                           {getStatusIcon(verification.status)}
-                          {verification.status ? verification.status.charAt(0).toUpperCase() + verification.status.slice(1) : 'Unknown'}
+                          {verification.status?.charAt(0).toUpperCase() + verification.status?.slice(1) || 'Unknown'}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-500">
@@ -303,7 +293,7 @@ const KYCReview: React.FC = () => {
                   <div className="flex items-center gap-2">
                     <FileText size={16} className="text-gray-400" />
                     <span className="text-gray-600">Document:</span>
-                    <span className="font-medium">{selectedVerification.document_type ? selectedVerification.document_type.toUpperCase() : 'N/A'}</span>
+                    <span className="font-medium">{selectedVerification.document_type?.toUpperCase() || 'N/A'}</span>
                   </div>
                 </div>
               </div>

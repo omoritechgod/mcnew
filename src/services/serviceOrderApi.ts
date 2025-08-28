@@ -1,5 +1,6 @@
 // src/services/serviceOrderApi.ts
 import { apiClient } from "./apiClient"
+import { ENDPOINTS } from "./config"
 
 // -------------------
 // Types
@@ -9,39 +10,77 @@ export interface ServiceOrder {
   user_id: number
   service_vendor_id: number
   service_pricing_id: number
+  amount: string
+  status: "pending_vendor_response" | "awaiting_payment" | "paid" | "completed" | "cancelled"
+  notes: string | null
   deadline: string
-  requirements: string
-  status: string
-  total_amount: number
-  payment_status: string
-  created_at: string
+  paid_at: string | null
+  completed_at: string | null
   updated_at: string
+  vendor_response?: string | null
+  requirements?: string
+  payment_status?: string
+  total_amount?: number
 
-  service_vendor?: {
+  service_vendor: {
     id: number
+    vendor_id: number
     service_name: string
+    description: string
     location: string
+    phone: string
+    rating: string
+    rating_count: number
+    total_reviews: number
+    is_featured: number
+    created_at: string
+    updated_at: string
     vendor: {
+      id: number
+      user_id: number
+      vendor_type: string
       business_name: string
+      category: string
+      is_setup_complete: number
+      is_verified: number
+      created_at: string
+      updated_at: string
+      is_live: boolean
       user: {
+        id: number
         name: string
         phone: string
+        email: string
+        profile_picture: string | null
+        user_type: string
+        status: number
+        phone_verified_at: string | null
+        created_at: string
+        updated_at: string
       }
     }
   }
 
-  service_pricing?: {
+  service_pricing: {
     id: number
     title: string
     price: number
+  } | null
+
+  user?: {
+    id: number
+    name: string
+    phone: string
+    email: string
+    profile_picture: string | null
   }
 }
 
 export interface CreateServiceOrderData {
   service_vendor_id: number
   service_pricing_id: number
+  notes: string
   deadline: string
-  requirements: string
 }
 
 export interface ServiceOrderResponse {
@@ -60,7 +99,7 @@ export const serviceOrderApi = {
     orderData: CreateServiceOrderData
   ): Promise<{ data: ServiceOrder }> => {
     const response = await apiClient.post<{ data: ServiceOrder }>(
-      "/api/service-orders",
+      ENDPOINTS.SERVICE_ORDERS,
       orderData,
       true
     )
@@ -82,7 +121,7 @@ export const serviceOrderApi = {
   getUserOrders: async (): Promise<ServiceOrderResponse> => {
     try {
       const response = await apiClient.get<ServiceOrderResponse>(
-        "/api/service-orders",
+        ENDPOINTS.SERVICE_ORDERS_MY,
         true
       )
 
@@ -110,7 +149,7 @@ export const serviceOrderApi = {
     orderId: number
   ): Promise<{ data: ServiceOrder }> => {
     const response = await apiClient.get<{ data: ServiceOrder }>(
-      `/api/service-orders/${orderId}`,
+      `${ENDPOINTS.SERVICE_ORDERS}/${orderId}`,
       true
     )
 
@@ -131,14 +170,63 @@ export const serviceOrderApi = {
     orderId: number
   ): Promise<{ message: string }> => {
     return apiClient.patch<{ message: string }>(
-      `/api/service-orders/${orderId}/cancel`,
+      `${ENDPOINTS.SERVICE_ORDERS}/${orderId}/cancel`,
       {},
       true
     )
   },
 
   /**
-   * Confirm payment (manual trigger if webhook didn’t update)
+   * Initiate payment for service order
+   */
+  initiatePayment: async (
+    orderId: number
+  ): Promise<{ status: string; data: { link: string } }> => {
+    const endpoint = ENDPOINTS.SERVICE_ORDER_PAY.replace('{id}', orderId.toString())
+    return apiClient.post<{ status: string; data: { link: string } }>(
+      endpoint,
+      {},
+      true
+    )
+  },
+
+  /**
+   * Mark service order as completed (user)
+   */
+  markCompleted: async (
+    orderId: number
+  ): Promise<{ message: string }> => {
+    const endpoint = ENDPOINTS.SERVICE_ORDER_MARK_COMPLETED.replace('{id}', orderId.toString())
+    return apiClient.post<{ message: string }>(
+      endpoint,
+      {},
+      true
+    )
+  },
+
+  /**
+   * Manual payment confirmation (fallback after Flutterwave redirect)
+   */
+  manualPaymentTrigger: async (
+    paymentData: {
+      data: {
+        status: string
+        tx_ref: string
+        meta: {
+          type: string
+          service_order_id: number
+        }
+      }
+    }
+  ): Promise<{ status: string }> => {
+    return apiClient.post<{ status: string }>(
+      ENDPOINTS.FLUTTERWAVE_MANUAL_TRIGGER,
+      paymentData,
+      true
+    )
+  },
+  /**
+   * Confirm payment (manual trigger if webhook didn't update)
    */
   confirmPayment: async (
     orderId: number,

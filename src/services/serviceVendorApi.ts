@@ -1,5 +1,6 @@
 // src/services/serviceVendorApi.ts
 import { apiClient } from "./apiClient"
+import { ENDPOINTS } from "./config"
 
 // -------------------
 // Types
@@ -69,7 +70,7 @@ export const serviceVendorApi = {
    */
   getPublicVendors: async (): Promise<ServiceVendorResponse> => {
     try {
-      const response = await apiClient.get<any>("/api/service-vendors", false)
+      const response = await apiClient.get<any>(ENDPOINTS.SERVICE_VENDORS_PUBLIC, false)
       console.log("Raw API response:", response)
 
       let vendors: ServiceVendor[] = []
@@ -152,7 +153,7 @@ export const serviceVendorApi = {
   ): Promise<{ data: ServiceVendor }> => {
     try {
       const response = await apiClient.get<{ data: ServiceVendor }>(
-        `/api/service-vendors/${vendorId}`,
+        `${ENDPOINTS.SERVICE_VENDORS_PUBLIC}/${vendorId}`,
         false
       )
       return response

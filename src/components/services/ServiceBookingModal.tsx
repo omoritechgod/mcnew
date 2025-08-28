@@ -29,7 +29,7 @@ const ServiceBookingModal: React.FC<ServiceBookingModalProps> = ({
 }) => {
   const [selectedPricing, setSelectedPricing] = useState<number | null>(null)
   const [deadline, setDeadline] = useState("")
-  const [requirements, setRequirements] = useState("")
+  const [notes, setNotes] = useState("")
 
   if (!isOpen) return null
 
@@ -46,8 +46,8 @@ const ServiceBookingModal: React.FC<ServiceBookingModalProps> = ({
       return
     }
 
-    if (!requirements.trim()) {
-      alert("Please describe your requirements")
+    if (!notes.trim()) {
+      alert("Please describe your notes")
       return
     }
 
@@ -55,7 +55,7 @@ const ServiceBookingModal: React.FC<ServiceBookingModalProps> = ({
       service_vendor_id: vendor.id,
       service_pricing_id: selectedPricing,
       deadline,
-      requirements: requirements.trim(),
+      notes: notes.trim(),
     }
 
     onBookingSubmit(orderData)
@@ -184,21 +184,21 @@ const ServiceBookingModal: React.FC<ServiceBookingModalProps> = ({
 
           {/* Requirements */}
           <div>
-            <label htmlFor="requirements" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-2">
               <MessageSquare size={16} className="inline mr-1" />
-              Service Requirements *
+              Service Notes *
             </label>
             <textarea
-              id="requirements"
-              value={requirements}
-              onChange={(e) => setRequirements(e.target.value)}
+              id="notes"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
               rows={4}
               required
               placeholder="Please describe your specific requirements, location details, and any special instructions..."
               className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
             />
             <p className="text-xs text-gray-500 mt-1">
-              Be as detailed as possible to help the vendor understand your needs
+              Be as detailed as possible to help the vendor understand your requirements
             </p>
           </div>
 

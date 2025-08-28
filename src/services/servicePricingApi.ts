@@ -1,5 +1,6 @@
 // src/services/servicePricingApi.ts
 import { apiClient } from "./apiClient"
+import { ENDPOINTS } from "./config"
 
 // -------------------
 // Types
@@ -41,7 +42,7 @@ export const servicePricingApi = {
   getMyPricings: async (): Promise<ServicePricingResponse> => {
     try {
       const response = await apiClient.get<ServicePricingResponse>(
-        "/api/vendor/service-pricings",
+        ENDPOINTS.VENDOR_SERVICE_PRICINGS,
         true
       )
 
@@ -70,7 +71,7 @@ export const servicePricingApi = {
     pricingData: CreateServicePricingData
   ): Promise<{ data: ServicePricing }> => {
     const response = await apiClient.post<{ data: ServicePricing }>(
-      "/api/vendor/service-pricings",
+      ENDPOINTS.VENDOR_SERVICE_PRICINGS,
       pricingData,
       true
     )
@@ -94,7 +95,7 @@ export const servicePricingApi = {
     pricingData: UpdateServicePricingData
   ): Promise<{ data: ServicePricing }> => {
     const response = await apiClient.put<{ data: ServicePricing }>(
-      `/api/vendor/service-pricings/${pricingId}`,
+      `${ENDPOINTS.VENDOR_SERVICE_PRICINGS}/${pricingId}`,
       pricingData,
       true
     )
@@ -117,7 +118,7 @@ export const servicePricingApi = {
     pricingId: number
   ): Promise<{ message: string }> => {
     return apiClient.delete<{ message: string }>(
-      `/api/vendor/service-pricings/${pricingId}`,
+      `${ENDPOINTS.VENDOR_SERVICE_PRICINGS}/${pricingId}`,
       true
     )
   },
@@ -129,7 +130,7 @@ export const servicePricingApi = {
     pricingId: number
   ): Promise<{ data: ServicePricing }> => {
     const response = await apiClient.get<{ data: ServicePricing }>(
-      `/api/vendor/service-pricings/${pricingId}`,
+      `${ENDPOINTS.VENDOR_SERVICE_PRICINGS}/${pricingId}`,
       true
     )
 

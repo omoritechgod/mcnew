@@ -29,6 +29,17 @@ export const ENDPOINTS = {
   UPLOAD_COMPLIANCE_DOCUMENT: '/api/vendor/compliance/upload-document',
   SUBMIT_FOR_REVIEW: '/api/vendor/compliance/submit-review',
   
+  // Service Vendor Endpoints
+  VENDOR_SERVICE_PRICINGS: '/api/vendor/service-pricings',
+  VENDOR_SERVICE_ORDERS: '/api/vendor/service-orders',
+  SERVICE_VENDORS_PUBLIC: '/api/service-vendors',
+  SERVICE_ORDERS: '/api/service-orders',
+  SERVICE_ORDERS_MY: '/api/service-orders/my',
+  SERVICE_ORDER_RESPOND: '/api/service-orders/{id}/respond',
+  SERVICE_ORDER_PAY: '/api/service-orders/{id}/pay',
+  SERVICE_ORDER_MARK_COMPLETED: '/api/service-orders/{id}/mark-completed',
+  FLUTTERWAVE_MANUAL_TRIGGER: '/api/flutterwave/manual-trigger',
+  
   // Vendor Registration (Legacy - to be organized later)
   VENDOR_REGISTER: '/api/vendor/register',
   VENDOR_MECHANIC_SETUP: '/api/vendor/mechanic/setup',
