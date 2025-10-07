@@ -2,54 +2,86 @@ import React, { useEffect, useState } from 'react';
 import { Link, useSearchParams } from "react-router-dom";
 import { CheckCircle } from "lucide-react";
 import { serviceOrderApi } from "../services/serviceOrderApi";
+import { orderApi } from "../services/orderApi";
 
 const PaymentSuccess: React.FC = () => {
   const [searchParams] = useSearchParams();
   const [isProcessing, setIsProcessing] = useState(false);
   const [confirmationStatus, setConfirmationStatus] = useState<'pending' | 'success' | 'error'>('pending');
+  const [orderType, setOrderType] = useState<'service_order' | 'ecommerce_order' | 'apartment_booking' | null>(null);
   const txRef = searchParams.get('tx_ref');
   const status = searchParams.get('status');
   const transactionId = searchParams.get('transaction_id');
-  
+  const type = searchParams.get('type'); // Get type from URL params
+
   useEffect(() => {
     // Manual payment confirmation as fallback
     if (txRef && status === 'successful') {
       const confirmPayment = async () => {
         setIsProcessing(true);
         try {
-          // Extract service order ID from tx_ref (assuming format like "flw_101" or "service_order_101")
-          let serviceOrderId: number | null = null;
-          
-          // Extract service order ID from tx_ref
-          // Format could be: "service_order_101", "flw_101", or just "101"
-          if (txRef.includes('service_order_')) {
+          let orderId: number | null = null;
+          let detectedType: 'service_order' | 'ecommerce_order' | 'apartment_booking' = 'service_order';
+
+          // Determine order type from tx_ref or URL param
+          if (type === 'ecommerce' || txRef.includes('ecommerce_order_') || txRef.includes('order_')) {
+            detectedType = 'ecommerce_order';
+            const match = txRef.match(/(?:ecommerce_order_|order_)(\d+)/);
+            if (match) orderId = parseInt(match[1]);
+          } else if (type === 'apartment' || txRef.includes('apartment_booking_') || txRef.includes('booking_')) {
+            detectedType = 'apartment_booking';
+            const match = txRef.match(/(?:apartment_booking_|booking_)(\d+)/);
+            if (match) orderId = parseInt(match[1]);
+          } else if (type === 'service' || txRef.includes('service_order_')) {
+            detectedType = 'service_order';
             const match = txRef.match(/service_order_(\d+)/);
-            if (match) serviceOrderId = parseInt(match[1]);
+            if (match) orderId = parseInt(match[1]);
           } else if (txRef.includes('flw_')) {
+            // Try to determine from flw_ prefix
             const match = txRef.match(/flw_(\d+)/);
-            if (match) serviceOrderId = parseInt(match[1]);
+            if (match) orderId = parseInt(match[1]);
           } else {
             // Try to extract any number from tx_ref
             const match = txRef.match(/(\d+)/);
-            if (match) serviceOrderId = parseInt(match[1]);
+            if (match) orderId = parseInt(match[1]);
           }
-          
-          if (serviceOrderId) {
-            await serviceOrderApi.manualPaymentTrigger({
-              data: {
-                status: 'successful',
-                tx_ref: txRef,
-                meta: {
-                  type: 'service_order',
-                  service_order_id: serviceOrderId
+
+          setOrderType(detectedType);
+
+          if (orderId) {
+            // Call appropriate API based on order type
+            if (detectedType === 'ecommerce_order') {
+              await orderApi.manualPaymentTrigger({
+                data: {
+                  status: 'successful',
+                  tx_ref: txRef,
+                  meta: {
+                    type: 'ecommerce_order',
+                    order_id: orderId
+                  }
                 }
-              }
-            });
-            
-            console.log('Manual payment trigger successful for service order:', serviceOrderId);
+              });
+              console.log('Manual payment trigger successful for e-commerce order:', orderId);
+            } else if (detectedType === 'service_order') {
+              await serviceOrderApi.manualPaymentTrigger({
+                data: {
+                  status: 'successful',
+                  tx_ref: txRef,
+                  meta: {
+                    type: 'service_order',
+                    service_order_id: orderId
+                  }
+                }
+              });
+              console.log('Manual payment trigger successful for service order:', orderId);
+            } else {
+              // Apartment booking - add when apartment payment API is ready
+              console.log('Apartment booking payment confirmation:', orderId);
+            }
+
             setConfirmationStatus('success');
           } else {
-            console.error('Could not extract service order ID from tx_ref:', txRef);
+            console.error('Could not extract order ID from tx_ref:', txRef);
             setConfirmationStatus('error');
           }
         } catch (error) {
@@ -59,12 +91,12 @@ const PaymentSuccess: React.FC = () => {
           setIsProcessing(false);
         }
       };
-      
+
       confirmPayment();
     } else {
       setConfirmationStatus('success'); // Default to success if no manual trigger needed
     }
-  }, [txRef, status]);
+  }, [txRef, status, type]);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-6">
@@ -113,24 +145,59 @@ const PaymentSuccess: React.FC = () => {
         </div>
       )}
       
-      <div className="mt-6 flex gap-4">
+      <div className="mt-6 flex flex-col sm:flex-row gap-4">
+        {/* Show appropriate link based on order type */}
+        {orderType === 'ecommerce_order' ? (
+          <>
+            <Link
+              to="/dashboard/user/orders"
+              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-center"
+            >
+              View My Orders
+            </Link>
+            <Link
+              to="/ecommerce"
+              className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition text-center"
+            >
+              Continue Shopping
+            </Link>
+          </>
+        ) : orderType === 'apartment_booking' ? (
+          <>
+            <Link
+              to="/dashboard/user/bookings"
+              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-center"
+            >
+              View My Bookings
+            </Link>
+            <Link
+              to="/service-apartments"
+              className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition text-center"
+            >
+              Browse More Properties
+            </Link>
+          </>
+        ) : (
+          <>
+            <Link
+              to="/dashboard/user/my-service-orders"
+              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-center"
+            >
+              View My Service Orders
+            </Link>
+            <Link
+              to="/general-services"
+              className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition text-center"
+            >
+              Browse More Services
+            </Link>
+          </>
+        )}
         <Link
-          to="/dashboard/user/my-service-orders"
-          className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+          to="/dashboard/user"
+          className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition text-center"
         >
-          View My Service Orders
-        </Link>
-        <Link
-          to="/dashboard/user/bookings"
-          className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
-        >
-          View My Bookings
-        </Link>
-        <Link
-          to="/general-services"
-          className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
-        >
-          Browse More Services
+          Go to Dashboard
         </Link>
       </div>
     </div>

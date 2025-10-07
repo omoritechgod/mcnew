@@ -17,6 +17,7 @@ export interface ServiceOrder {
   paid_at: string | null
   completed_at: string | null
   created_at: string
+  created_at: string
   updated_at: string
   vendor_response?: string | null;
   requirements?: string;

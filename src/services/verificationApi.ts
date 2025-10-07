@@ -16,7 +16,7 @@ export interface ComplianceStatus {
 
 export interface ComplianceDocument {
   type: 'nin' | 'cac';
-  file: File;
+  document_url: string;
 }
 
 export class VerificationApiService {
@@ -29,12 +29,14 @@ export class VerificationApiService {
     return apiClient.post('/api/otp/verify-phone', { user_id: userId, otp });
   }
 
-  // Compliance Document Upload
+  // Compliance Document Upload - Updated to send document URL
   async uploadComplianceDocument(document: ComplianceDocument): Promise<{ message: string; document_url: string }> {
-    const formData = new FormData();
-    formData.append('document', document.file);
-    formData.append('type', document.type);
-    return apiClient.uploadFile('/api/vendor/compliance/upload-document', formData);
+    const payload = {
+      type: document.type,
+      document_url: document.document_url
+    };
+    
+    return apiClient.post('/api/vendor/compliance/upload-document', payload);
   }
 
   // Submit for Review

@@ -8,14 +8,17 @@ import {
   Save,
   AlertCircle,
   CheckCircle,
-  Upload
+  Upload,
+  Clock
 } from 'lucide-react';
 import { getStoredUser } from '../../../utils/dashboardUtils';
 import { authApi } from '../../../services/authApi';
+import { uploadToCloudinary } from '../../../utils/cloudinaryUploader';
 
 const UserProfile: React.FC = () => {
   const [user, setUser] = useState(getStoredUser());
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [message, setMessage] = useState({ type: '', text: '' });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -59,16 +62,32 @@ const UserProfile: React.FC = () => {
     }
 
     setIsUploading(true);
+    setUploadProgress(0);
     setMessage({ type: '', text: '' });
 
     try {
-      const data = await authApi.updateProfileImage(selectedFile);
+      // Step 1: Upload to Cloudinary
+      setUploadProgress(25);
+      setMessage({ type: 'info', text: 'Uploading image to cloud storage...' });
+      
+      const cloudinaryUrl = await uploadToCloudinary(selectedFile);
+      
+      if (!cloudinaryUrl) {
+        throw new Error('Failed to upload image to cloud storage');
+      }
+
+      setUploadProgress(75);
+      setMessage({ type: 'info', text: 'Updating profile...' });
+
+      // Step 2: Send URL to backend
+      const data = await authApi.updateProfileImage(cloudinaryUrl);
 
       // Update user data in state and localStorage
-      const updatedUser = { ...user, profile_image: data.profile_image_url };
+      const updatedUser = { ...user, profile_image: cloudinaryUrl };
       setUser(updatedUser);
       localStorage.setItem('user', JSON.stringify(updatedUser));
 
+      setUploadProgress(100);
       setMessage({ type: 'success', text: 'Profile image updated successfully!' });
       setSelectedFile(null);
       setPreviewUrl(null);
@@ -82,6 +101,7 @@ const UserProfile: React.FC = () => {
       setMessage({ type: 'error', text: error.message || 'Failed to update profile image' });
     } finally {
       setIsUploading(false);
+      setUploadProgress(0);
     }
   };
 
@@ -110,11 +130,35 @@ const UserProfile: React.FC = () => {
             {message.text && (
               <div className={`mb-6 p-4 rounded-lg flex items-center gap-3 ${
                 message.type === 'success' 
-                  ? 'bg-green-50 border border-green-200 text-green-800' 
+                  ? 'bg-green-50 border border-green-200 text-green-800'
+                  : message.type === 'info'
+                  ? 'bg-blue-50 border border-blue-200 text-blue-800'
                   : 'bg-red-50 border border-red-200 text-red-800'
               }`}>
-                {message.type === 'success' ? <CheckCircle size={20} /> : <AlertCircle size={20} />}
+                {message.type === 'success' ? (
+                  <CheckCircle size={20} />
+                ) : message.type === 'info' ? (
+                  <Clock size={20} />
+                ) : (
+                  <AlertCircle size={20} />
+                )}
                 <span>{message.text}</span>
+              </div>
+            )}
+
+            {/* Upload Progress Bar */}
+            {isUploading && uploadProgress > 0 && (
+              <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-blue-800 font-medium">Upload Progress</span>
+                  <span className="text-blue-600 text-sm">{uploadProgress}%</span>
+                </div>
+                <div className="w-full bg-blue-200 rounded-full h-2">
+                  <div 
+                    className="bg-blue-600 h-2 rounded-full transition-all duration-300 ease-out"
+                    style={{ width: `${uploadProgress}%` }}
+                  ></div>
+                </div>
               </div>
             )}
 
@@ -139,7 +183,8 @@ const UserProfile: React.FC = () => {
                     
                     <label 
                       htmlFor="profile-image-input"
-                      className="absolute bottom-0 right-0 bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full cursor-pointer transition-colors"
+                      className="absolute bottom-0 right-0 bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full cursor-pointer transition-colors disabled:cursor-not-allowed disabled:bg-gray-400"
+                      style={{ pointerEvents: isUploading ? 'none' : 'auto' }}
                     >
                       <Camera size={16} />
                     </label>
@@ -150,6 +195,7 @@ const UserProfile: React.FC = () => {
                     type="file"
                     accept="image/*"
                     onChange={handleFileSelect}
+                    disabled={isUploading}
                     className="hidden"
                   />
 
@@ -162,7 +208,7 @@ const UserProfile: React.FC = () => {
                         <button
                           onClick={handleProfileImageUpdate}
                           disabled={isUploading}
-                          className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2"
+                          className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2"
                         >
                           {isUploading ? (
                             <>
@@ -182,7 +228,8 @@ const UserProfile: React.FC = () => {
                             const fileInput = document.getElementById('profile-image-input') as HTMLInputElement;
                             if (fileInput) fileInput.value = '';
                           }}
-                          className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
+                          disabled={isUploading}
+                          className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors disabled:cursor-not-allowed disabled:bg-gray-100"
                         >
                           Cancel
                         </button>
@@ -192,7 +239,8 @@ const UserProfile: React.FC = () => {
 
                   <p className="text-xs text-gray-500 mt-2">
                     Max file size: 5MB<br />
-                    Supported formats: JPG, PNG, GIF
+                    Supported formats: JPG, PNG, GIF<br />
+                    Images stored securely in the cloud
                   </p>
                 </div>
               </div>

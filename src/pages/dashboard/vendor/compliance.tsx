@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { getStoredUser } from '../../../utils/dashboardUtils';
 import { verificationApi } from '../../../services/verificationApi';
+import { uploadToCloudinary } from '../../../utils/cloudinaryUploader';
 import OTPVerificationModal from '../../../components/modals/OTPVerificationModal';
 
 interface ComplianceStatus {
@@ -32,6 +33,7 @@ const VendorCompliance: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [message, setMessage] = useState({ type: '', text: '' });
 
   useEffect(() => {
@@ -78,16 +80,32 @@ const VendorCompliance: React.FC = () => {
     }
 
     setIsUploading(true);
+    setUploadProgress(0);
     setMessage({ type: '', text: '' });
 
     try {
       const documentType = user.vendor.vendor_type === 'individual' ? 'nin' : 'cac';
       
+      // Upload to Cloudinary first
+      setUploadProgress(25);
+      setMessage({ type: 'info', text: 'Uploading document to cloud storage...' });
+      
+      const cloudinaryUrl = await uploadToCloudinary(selectedFile);
+      
+      if (!cloudinaryUrl) {
+        throw new Error('Failed to upload document to cloud storage');
+      }
+
+      setUploadProgress(75);
+      setMessage({ type: 'info', text: 'Saving document information...' });
+
+      // Send document URL to backend
       await verificationApi.uploadComplianceDocument({
         type: documentType,
-        file: selectedFile
+        document_url: cloudinaryUrl
       });
 
+      setUploadProgress(100);
       setMessage({ type: 'success', text: 'Document uploaded successfully!' });
       setSelectedFile(null);
       
@@ -102,6 +120,7 @@ const VendorCompliance: React.FC = () => {
       setMessage({ type: 'error', text: error.message || 'Failed to upload document' });
     } finally {
       setIsUploading(false);
+      setUploadProgress(0);
     }
   };
 
@@ -174,11 +193,35 @@ const VendorCompliance: React.FC = () => {
           {message.text && (
             <div className={`mb-6 p-4 rounded-lg flex items-center gap-3 ${
               message.type === 'success' 
-                ? 'bg-green-50 border border-green-200 text-green-800' 
+                ? 'bg-green-50 border border-green-200 text-green-800'
+                : message.type === 'info'
+                ? 'bg-blue-50 border border-blue-200 text-blue-800'
                 : 'bg-red-50 border border-red-200 text-red-800'
             }`}>
-              {message.type === 'success' ? <CheckCircle size={20} /> : <AlertCircle size={20} />}
+              {message.type === 'success' ? (
+                <CheckCircle size={20} />
+              ) : message.type === 'info' ? (
+                <Clock size={20} />
+              ) : (
+                <AlertCircle size={20} />
+              )}
               <span>{message.text}</span>
+            </div>
+          )}
+
+          {/* Upload Progress Bar */}
+          {isUploading && uploadProgress > 0 && (
+            <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-blue-800 font-medium">Upload Progress</span>
+                <span className="text-blue-600 text-sm">{uploadProgress}%</span>
+              </div>
+              <div className="w-full bg-blue-200 rounded-full h-2">
+                <div 
+                  className="bg-blue-600 h-2 rounded-full transition-all duration-300 ease-out"
+                  style={{ width: `${uploadProgress}%` }}
+                ></div>
+              </div>
             </div>
           )}
 
@@ -402,6 +445,7 @@ const VendorCompliance: React.FC = () => {
                         <li>• Accepted formats: JPG, PNG, PDF</li>
                         <li>• Maximum file size: 10MB</li>
                         <li>• Ensure document is clear and readable</li>
+                        <li>• Documents are securely stored in the cloud</li>
                       </ul>
                     </div>
                   </div>
@@ -417,7 +461,8 @@ const VendorCompliance: React.FC = () => {
                     type="file"
                     accept="image/*,.pdf"
                     onChange={handleFileSelect}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    disabled={isUploading}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
                   />
                   {selectedFile && (
                     <p className="text-sm text-gray-600 mt-2">
@@ -430,7 +475,7 @@ const VendorCompliance: React.FC = () => {
                   <button
                     onClick={handleDocumentUpload}
                     disabled={isUploading}
-                    className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white font-semibold px-6 py-3 rounded-xl transition-colors flex items-center gap-2"
+                    className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold px-6 py-3 rounded-xl transition-colors flex items-center gap-2"
                   >
                     {isUploading ? (
                       <>

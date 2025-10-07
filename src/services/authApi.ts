@@ -51,10 +51,11 @@ export class AuthApiService {
     return apiClient.get(ENDPOINTS.ME);
   }
 
-  async updateProfileImage(imageFile: File): Promise<{ message: string; profile_image_url: string }> {
-    const formData = new FormData();
-    formData.append('profile_picture', imageFile);
-    return apiClient.uploadFile(ENDPOINTS.UPDATE_PROFILE_IMAGE, formData);
+  async updateProfileImage(imageUrl: string): Promise<{ message: string; profile_image_url: string }> {
+    const payload = {
+      profile_picture_url: imageUrl
+    };
+    return apiClient.post(ENDPOINTS.UPDATE_PROFILE_IMAGE, payload);
   }
 
   // Error logging
