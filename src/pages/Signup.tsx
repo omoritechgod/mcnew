@@ -116,6 +116,9 @@ const Signup: React.FC = () => {
         case 'service_vendor':
           result = await vendorApi.setupServiceVendor(categorySpecificData);
           break;
+        case 'food_vendor':
+          result = await vendorApi.setupFoodVendor(categorySpecificData);
+          break;
         default:
           throw new Error('Invalid vendor category');
       }

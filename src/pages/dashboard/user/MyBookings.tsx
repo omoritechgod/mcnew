@@ -130,9 +130,11 @@ const MyBookings: React.FC = () => {
         payment_method: "paystack",
       })
 
-      // Redirect to payment URL or open Paystack popup
-      if (response.data.payment_url) {
-        window.open(response.data.payment_url, "_blank")
+      // Redirect to Flutterwave payment page
+      if (response.data.link) {
+        window.location.href = response.data.link
+      } else {
+        alert("Payment link not available. Please try again.")
       }
     } catch (error) {
       console.error("Payment initiation error:", error)

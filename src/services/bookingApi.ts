@@ -1,5 +1,61 @@
 import { apiClient } from './api';
 
+const ADMIN_BASE_URL = import.meta.env.VITE_ADMIN_API_BASE_URL || 'https://mdoilandgas.com/mcdee/backend/public';
+
+class AdminBookingApiClient {
+  private baseURL: string;
+
+  constructor(baseURL: string) {
+    this.baseURL = baseURL;
+  }
+
+  private getAuthHeaders(): Record<string, string> {
+    const adminToken = localStorage.getItem('adminToken');
+    return {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      ...(adminToken ? { 'Authorization': `Bearer ${adminToken}` } : {}),
+    };
+  }
+
+  async request<T = any>(endpoint: string, config: RequestInit = {}): Promise<T> {
+    const url = `${this.baseURL}${endpoint}`;
+
+    const requestConfig: RequestInit = {
+      ...config,
+      headers: {
+        ...this.getAuthHeaders(),
+        ...config.headers,
+      },
+    };
+
+    try {
+      const response = await fetch(url, requestConfig);
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Network error' }));
+        throw new Error(errorData.message || `HTTP ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error(`Admin Booking API Error [${config.method || 'GET'} ${endpoint}]:`, error);
+      throw error;
+    }
+  }
+
+  async get<T = any>(endpoint: string): Promise<T> {
+    return this.request<T>(endpoint, { method: 'GET' });
+  }
+
+  async put<T = any>(endpoint: string, data?: any): Promise<T> {
+    return this.request<T>(endpoint, {
+      method: 'PUT',
+      body: data ? JSON.stringify(data) : undefined,
+    });
+  }
+}
+
+const adminBookingClient = new AdminBookingApiClient(ADMIN_BASE_URL);
+
 // Booking types based on your Laravel backend
 export interface BookingRequest {
   listing_id: number;
@@ -112,23 +168,33 @@ export const bookingApi = {
 export const adminBookingApi = {
   // Get all apartment bookings
   async getApartmentBookings(): Promise<BookingsListResponse> {
-    return apiClient.get<BookingsListResponse>('/api/admin/bookings/apartments', true);
+    return adminBookingClient.get<BookingsListResponse>('/api/admin/bookings/apartments');
   },
 
   // Get all bookings (admin dashboard)
   async getAllBookings(): Promise<BookingsListResponse> {
-    return apiClient.get<BookingsListResponse>('/api/admin/apartment/bookings', true);
+    return adminBookingClient.get<BookingsListResponse>('/api/admin/apartment/bookings');
   },
 
   // Get booking details by ID
   async getBookingById(id: number): Promise<BookingResponse> {
-    return apiClient.get<BookingResponse>(`/api/admin/bookings/${id}`, true);
+    return adminBookingClient.get<BookingResponse>(`/api/admin/bookings/${id}`);
   },
 
   // Update booking status (admin)
   async updateBookingStatus(id: number, status: string, notes?: string): Promise<BookingResponse> {
-    return apiClient.put<BookingResponse>(`/api/admin/bookings/${id}/status`, { status, notes }, true);
+    return adminBookingClient.put<BookingResponse>(`/api/admin/bookings/${id}/status`, { status, notes });
   }
+};
+
+// -----------------
+// Vendor Booking API
+// -----------------
+export const vendorBookingApi = {
+  // Get vendor's apartment bookings
+  async getVendorBookings(): Promise<BookingsListResponse> {
+    return apiClient.get<BookingsListResponse>('/api/vendor/bookings/apartments', true);
+  },
 };
 
 // -----------------

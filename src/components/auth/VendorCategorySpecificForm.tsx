@@ -5,6 +5,7 @@ import RiderFormFields from './category-forms/RiderFormFields';
 import ProductVendorFormFields from './category-forms/ProductVendorFormFields';
 import ServiceApartmentFormFields from './category-forms/ServiceApartmentFormFields';
 import ServiceVendorFormFields from './category-forms/ServiceVendorFormFields';
+import FoodVendorFormFields from './category-forms/FoodVendorFormFields';
 
 interface VendorCategorySpecificFormProps {
   category: string;

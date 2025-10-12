@@ -37,7 +37,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [notifications, setNotifications] = useState(3)
 
-  const BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://mdoilandgas.com/mcdee/backend/public"
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000"
 
   useEffect(() => {
     fetchUserData()
@@ -92,20 +92,18 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       { icon: <User size={20} />, label: "Profile", path: `${getDashboardPath(user!)}/profile` },
     ]
 
-  if (user.user_type === "user") {
-    return [
-      ...baseItems,
-      { icon: <Wallet size={20} />, label: "Wallet", path: "/dashboard/user/wallet" },
-      { icon: <Package size={20} />, label: "Orders", path: "/dashboard/user/orders" },
-      { icon: <Building size={20} />, label: "My Bookings", path: "/dashboard/user/bookings" },
-      { icon: <Wrench size={20} />, label: "My Service Orders", path: "/dashboard/user/my-service-orders" }, // 👈 ADDED
-      { icon: <Car size={20} />, label: "Rides", path: "/dashboard/user/rides" },
-      // { icon: <BarChart3 size={20} />, label: "Analytics", path: `${getDashboardPath(user!)}/analytics` },
-      // { icon: <MessageCircle size={20} />, label: "Messages", path: `${getDashboardPath(user!)}/messages` },
-      { icon: <Settings size={20} />, label: "Settings", path: `${getDashboardPath(user!)}/settings` },
-    ]
-  }
-
+    if (user.user_type === "user") {
+      return [
+        ...baseItems,
+        { icon: <Wallet size={20} />, label: "Wallet", path: "/dashboard/user/wallet" },
+        { icon: <Package size={20} />, label: "Orders", path: "/dashboard/user/orders" },
+        { icon: <UtensilsCrossed size={20} />, label: "Food Orders", path: "/dashboard/user/food-orders" },
+        { icon: <Building size={20} />, label: "My Bookings", path: "/dashboard/user/bookings" },
+        { icon: <Wrench size={20} />, label: "My Service Orders", path: "/dashboard/user/my-service-orders" },
+        { icon: <Car size={20} />, label: "Rides", path: "/dashboard/user/rides" },
+        { icon: <Settings size={20} />, label: "Settings", path: `${getDashboardPath(user!)}/settings` },
+      ]
+    }
 
     // Vendor-specific navigation
     const vendorCategory = user.vendor?.category
@@ -133,20 +131,21 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       case "service_apartment":
         vendorItems.push(
           { icon: <Building size={20} />, label: "Properties", path: "/dashboard/apartment/properties" },
-          { icon: <Users size={20} />, label: "Bookings", path: "/dashboard/apartment/bookings" },
+          { icon: <Users size={20} />, label: "Bookings", path: "/dashboard/apartment/VendApartmentBookings" },
           { icon: <Package size={20} />, label: "Add Listing", path: "/dashboard/apartment/listing" },
         )
         break
 
-        case "service_vendor":
-          vendorItems.push(
-            { icon: <Wrench size={20} />, label: "Service Pricings", path: "/dashboard/service-vendor/pricings" },
-            { icon: <Package size={20} />, label: "Service Orders", path: "/dashboard/service-vendor/orders" }
-          )
-          break
+      case "service_vendor":
+        vendorItems.push(
+          { icon: <Wrench size={20} />, label: "Service Pricings", path: "/dashboard/service-vendor/pricings" },
+          { icon: <Package size={20} />, label: "Service Orders", path: "/dashboard/service-vendor/orders" }
+        )
+        break
 
       case "food_vendor":
         vendorItems.push(
+          { icon: <Settings size={20} />, label: "Business Profile", path: "/dashboard/food-vendor/profile-setup" },
           { icon: <UtensilsCrossed size={20} />, label: "Menu", path: "/dashboard/food-vendor/menu" },
           { icon: <Package size={20} />, label: "Orders", path: "/dashboard/food-vendor/orders" },
         )
@@ -159,7 +158,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       ...baseItems, // Overview + Profile
       ...vendorItems,
       { icon: <BarChart3 size={20} />, label: "Analytics", path: `${getDashboardPath(user!)}/analytics` },
-      // { icon: <MessageCircle size={20} />, label: "Messages", path: `${getDashboardPath(user!)}/messages` },
       { icon: <Shield size={20} />, label: "Compliance", path: `${getDashboardPath(user!)}/compliance` },
       { icon: <Settings size={20} />, label: "Settings", path: `${getDashboardPath(user!)}/settings` },
     ]
