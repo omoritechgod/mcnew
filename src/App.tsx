@@ -35,6 +35,7 @@ import ServiceOrders from "./pages/dashboard/service-vendor/ServiceOrders"
 import ApartmentDashboard from "./pages/dashboard/apartment"
 import FoodVendorDashboard from "./pages/dashboard/food-vendor"
 import FoodVendorMenuManagement from "./pages/dashboard/food-vendor/MenuManagement"
+import FoodVendorProfileSetup from "./pages/dashboard/food-vendor/ProfileSetup"
 import FoodVendorOrders from "./pages/dashboard/food-vendor/Orders"
 import GeneralVendorDashboard from "./pages/dashboard/vendor"
 import ApartmentListingForm from "./pages/dashboard/vendor/ApartmentListing"
@@ -223,6 +224,14 @@ function App() {
             element={
               <PrivateRouteVendor>
                 <FoodVendorMenuManagement />
+              </PrivateRouteVendor>
+            }
+          />
+                    <Route
+            path="/dashboard/food-vendor/profile-setup"
+            element={
+              <PrivateRouteVendor>
+                <FoodVendorProfileSetup />
               </PrivateRouteVendor>
             }
           />

@@ -322,6 +322,27 @@ export const foodApi = {
     }
   },
 
+    /**
+   * Get all live food vendors with their available menus (public)
+   */
+  getPublicVendorsWithMenus: async (): Promise<Array<FoodVendorProfile & { menu_items: FoodMenuItem[] }>> => {
+    try {
+      const response = await apiClient.get<any>('/api/food/vendors-with-menus', false);
+      if (response && Array.isArray(response.vendors)) {
+        return response.vendors;
+      }
+      if (response.data && Array.isArray(response.data.vendors)) {
+        return response.data.vendors;
+      }
+      console.warn('Unexpected vendors-with-menus response format:', response);
+      return [];
+    } catch (error) {
+      console.error('Error fetching vendors with menus:', error);
+      return [];
+    }
+  },
+
+
   /**
    * Get all live food vendors
    */

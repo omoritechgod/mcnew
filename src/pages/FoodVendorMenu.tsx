@@ -29,24 +29,37 @@ const FoodVendorMenu: React.FC = () => {
       setIsLoading(true);
       setError('');
 
-      const [vendorResponse, menuResponse] = await Promise.all([
-        foodApi.getPublicVendorDetails(id),
-        foodApi.getPublicMenus({ vendor_id: id })
-      ]);
+      const vendorResponse = await foodApi.getPublicVendorDetails(id);
 
-      if (vendorResponse.data) {
-        setVendor(vendorResponse.data as FoodVendorProfile);
+      if (vendorResponse && vendorResponse.vendor) {
+        const data = vendorResponse.vendor;
+
+        // Normalize data types for safety
+        const normalizedVendor = {
+          ...data,
+          average_rating: Number(data.average_rating || 0),
+          delivery_fee: Number(data.delivery_fee || 0),
+          minimum_order_amount: Number(data.minimum_order_amount || 0),
+          menu_items: Array.isArray(data.menu_items) ? data.menu_items.map((item: any) => ({
+            ...item,
+            price: Number(item.price || 0)
+          })) : []
+        };
+
+        setVendor(normalizedVendor as FoodVendorProfile);
+        setMenuItems(normalizedVendor.menu_items);
+      } else {
+        throw new Error('Invalid vendor data');
       }
 
-      if (menuResponse) {
-        setMenuItems(Array.isArray(menuResponse) ? menuResponse : []);
-      }
     } catch (err: any) {
+      console.error('Error loading vendor:', err);
       setError(err.message || 'Failed to load vendor details');
     } finally {
       setIsLoading(false);
     }
   };
+
 
   const loadCartFromStorage = () => {
     try {
