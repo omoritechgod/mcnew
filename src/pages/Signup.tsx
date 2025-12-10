@@ -34,7 +34,7 @@ const Signup: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://mdoilandgas.com/mcdee/backend/public';
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://omoriapi.name.ng/mcdee/backend/public';
 
   const handleInitialRegistrationSubmit = async (formData: InitialRegistrationData) => {
     setIsLoading(true);

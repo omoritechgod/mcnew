@@ -45,4 +45,4 @@ export { apiClient }
 /**
  * Export base URL for consistency
  */
-export const BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://mdoilandgas.com/mcdee/backend/public/api"
+export const BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://omoriapi.name.ng/mcdee/backend/public/api"

@@ -1,6 +1,6 @@
 import { apiClient } from './api';
 
-const ADMIN_BASE_URL = import.meta.env.VITE_ADMIN_API_BASE_URL || 'https://mdoilandgas.com/mcdee/backend/public';
+const ADMIN_BASE_URL = import.meta.env.VITE_ADMIN_API_BASE_URL || 'https://omoriapi.name.ng/mcdee/backend/public';
 
 class AdminBookingApiClient {
   private baseURL: string;

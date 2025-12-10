@@ -37,7 +37,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [notifications, setNotifications] = useState(3)
 
-  const BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://mdoilandgas.com/mcdee/backend/public"
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://omoriapi.name.ng/mcdee/backend/public"
 
   useEffect(() => {
     fetchUserData()

@@ -23,7 +23,7 @@ const UserProfile: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
-  const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://mdoilandgas.com/mcdee/backend/public';
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://omoriapi.name.ng/mcdee/backend/public';
 
   useEffect(() => {
     if (selectedFile) {
